@@ -1,14 +1,8 @@
-import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
+import { EntityForm } from "@shared/components/EntityForm";
 import { Field } from "@shared/components/Field";
-import { Button } from "@shared/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@shared/components/ui/card";
 import { Input } from "@shared/components/ui/input";
+import { Textarea } from "@shared/components/ui/textarea";
 import { OwnerFormValues } from "../types/ownerTypes";
 
 export function OwnerForm({
@@ -25,44 +19,27 @@ export function OwnerForm({
   onSubmit: (values: OwnerFormValues) => void;
 }) {
   return (
-    <Card>
-      <CardHeader className="flex-row items-center justify-between space-y-0">
-        <CardTitle>
-          {isEditing ? "Dettaglio proprietario" : "Nuovo proprietario"}
-        </CardTitle>
-        <Button variant="outline" onClick={onBack}>
-          <ArrowLeft size={16} /> Indietro
-        </Button>
-      </CardHeader>
-      <CardContent>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="max-w-2xl space-y-3"
-        >
-          <Field label="Nome">
-            <Input {...form.register("first_name")} />
-          </Field>
-          <Field label="Cognome">
-            <Input {...form.register("last_name")} />
-          </Field>
-          <Field label="Codice fiscale">
-            <Input {...form.register("tax_code")} />
-          </Field>
-          <Field label="Contatti">
-            <Input {...form.register("contacts")} />
-          </Field>
-          <div className="flex justify-end gap-2">
-            <Button>
-              <Plus size={16} /> Salva
-            </Button>
-            {isEditing ? (
-              <Button type="button" variant="outline" onClick={onDelete}>
-                <Trash2 size={16} /> Elimina
-              </Button>
-            ) : null}
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+    <EntityForm
+      title={isEditing ? "Dettaglio proprietario" : "Nuovo proprietario"}
+      isEditing={isEditing}
+      onBack={onBack}
+      onDelete={onDelete}
+      onSubmit={form.handleSubmit(onSubmit)}
+    >
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Nome">
+          <Input {...form.register("first_name")} autoComplete="given-name" />
+        </Field>
+        <Field label="Cognome">
+          <Input {...form.register("last_name")} autoComplete="family-name" />
+        </Field>
+      </div>
+      <Field label="Codice fiscale">
+        <Input {...form.register("tax_code")} autoComplete="off" />
+      </Field>
+      <Field label="Contatti">
+        <Textarea {...form.register("contacts")} />
+      </Field>
+    </EntityForm>
   );
 }

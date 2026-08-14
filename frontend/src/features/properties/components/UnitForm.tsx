@@ -1,15 +1,9 @@
-import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
+import { EntityForm } from "@shared/components/EntityForm";
 import { Field } from "@shared/components/Field";
-import { Button } from "@shared/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@shared/components/ui/card";
 import { Input } from "@shared/components/ui/input";
 import { Select } from "@shared/components/ui/select";
+import { Textarea } from "@shared/components/ui/textarea";
 import { Property } from "@shared/lib/api";
 import { UnitFormValues } from "../types/propertyTypes";
 
@@ -31,58 +25,41 @@ export function UnitForm({
   onSubmit: (values: UnitFormValues) => void;
 }) {
   return (
-    <Card>
-      <CardHeader className="flex-row items-center justify-between space-y-0">
-        <CardTitle>
-          {isEditing ? "Dettaglio unità" : "Nuova unità"}
-          {parentName ? ` · ${parentName}` : ""}
-        </CardTitle>
-        <Button variant="outline" onClick={onBack}>
-          <ArrowLeft size={16} /> Indietro
-        </Button>
-      </CardHeader>
-      <CardContent>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="max-w-2xl space-y-3"
-        >
-          <Field label="Immobile">
-            <Select {...form.register("property_id")}>
-              <option value="">Seleziona immobile</option>
-              {properties.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </Select>
-          </Field>
-          <Field label="Nome unità" error={form.formState.errors.name?.message}>
-            <Input {...form.register("name")} />
-          </Field>
-          <Field label="Tipologia">
-            <Select {...form.register("unit_type")}>
-              <option value="apartment">Appartamento</option>
-              <option value="garage">Garage</option>
-              <option value="room">Stanza</option>
-              <option value="commercial">Locale commerciale</option>
-              <option value="other">Altro</option>
-            </Select>
-          </Field>
-          <Field label="Note">
-            <Input {...form.register("notes")} />
-          </Field>
-          <div className="flex justify-end gap-2">
-            <Button>
-              <Plus size={16} /> Salva
-            </Button>
-            {isEditing ? (
-              <Button type="button" variant="outline" onClick={onDelete}>
-                <Trash2 size={16} /> Elimina
-              </Button>
-            ) : null}
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+    <EntityForm
+      title={isEditing ? "Dettaglio unità" : "Nuova unità"}
+      eyebrow={parentName}
+      isEditing={isEditing}
+      onBack={onBack}
+      onDelete={onDelete}
+      onSubmit={form.handleSubmit(onSubmit)}
+    >
+      <Field label="Immobile">
+        <Select {...form.register("property_id")}>
+          <option value="">Seleziona immobile</option>
+          {properties.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.name}
+            </option>
+          ))}
+        </Select>
+      </Field>
+      <div className="grid gap-4 sm:grid-cols-[1fr_220px]">
+        <Field label="Nome unità" error={form.formState.errors.name?.message}>
+          <Input {...form.register("name")} autoComplete="off" />
+        </Field>
+        <Field label="Tipologia">
+          <Select {...form.register("unit_type")}>
+            <option value="apartment">Appartamento</option>
+            <option value="garage">Garage</option>
+            <option value="room">Stanza</option>
+            <option value="commercial">Locale commerciale</option>
+            <option value="other">Altro</option>
+          </Select>
+        </Field>
+      </div>
+      <Field label="Note">
+        <Textarea {...form.register("notes")} />
+      </Field>
+    </EntityForm>
   );
 }
