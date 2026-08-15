@@ -1,9 +1,13 @@
 import { Movement } from "@shared/lib/api";
-import { eur } from "@shared/lib/utils";
+import { eur, formatDate } from "@shared/lib/utils";
 import { SectionPanel } from "@shared/components/SectionPanel";
 import { Stat } from "@shared/components/Stat";
 import { Badge } from "@shared/components/ui/badge";
 import { Table, Td, Th } from "@shared/components/ui/table";
+import {
+  paymentStatusClass,
+  paymentStatusLabel,
+} from "../utils/movementUtils";
 
 export function MovementTable({
   movements,
@@ -58,11 +62,13 @@ export function MovementTable({
               }
               onClick={() => onSelect?.(movement)}
             >
-              <Td>{movement.accrual_date}</Td>
+              <Td>{formatDate(movement.accrual_date)}</Td>
               <Td>{movement.description}</Td>
               <Td>{movement.category}</Td>
               <Td>
-                <Badge>{movement.status}</Badge>
+                <Badge className={paymentStatusClass(movement.status)}>
+                  {paymentStatusLabel(movement.status)}
+                </Badge>
               </Td>
               <Td
                 className={`text-right font-medium ${movement.type === "income" ? "text-emerald-700" : "text-red-700"}`}

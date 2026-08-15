@@ -28,24 +28,9 @@ const Tenants = lazy(() =>
     default: module.Tenants,
   })),
 );
-const Collections = lazy(() =>
-  import("@features/collections/views/Collections").then((module) => ({
-    default: module.Collections,
-  })),
-);
 const Movements = lazy(() =>
   import("@features/movements/views/Movements").then((module) => ({
     default: module.Movements,
-  })),
-);
-const Deadlines = lazy(() =>
-  import("@features/deadlines/views/Deadlines").then((module) => ({
-    default: module.Deadlines,
-  })),
-);
-const Reports = lazy(() =>
-  import("@features/reports/views/Reports").then((module) => ({
-    default: module.Reports,
   })),
 );
 
@@ -82,7 +67,6 @@ function AppBody({
                 units={data.units}
                 contracts={data.contracts}
                 movements={data.movements}
-                deadlines={data.deadlines}
                 forecast={data.forecast}
               />
             )}
@@ -99,17 +83,8 @@ function AppBody({
               {section === "tenants" && (
                 <Tenants data={data} reload={load} getToken={getToken} />
               )}
-              {section === "collections" && (
-                <Collections data={data} reload={load} getToken={getToken} />
-              )}
               {section === "movements" && (
                 <Movements data={data} reload={load} getToken={getToken} />
-              )}
-              {section === "deadlines" && (
-                <Deadlines data={data} reload={load} getToken={getToken} />
-              )}
-              {section === "reports" && (
-                <Reports data={data} getToken={getToken} />
               )}
             </Suspense>
           </>

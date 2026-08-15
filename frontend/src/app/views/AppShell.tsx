@@ -1,15 +1,13 @@
 import {
   Building2,
-  CalendarClock,
-  Coins,
   FileText,
   LayoutDashboard,
-  ReceiptText,
   UserRound,
   Users,
   WalletCards,
 } from "lucide-react";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode } from "react";
+import { Toaster } from "sonner";
 import { Section } from "@app/types/app";
 import {
   Sidebar,
@@ -30,10 +28,7 @@ const nav = [
   ["owners", UserRound, "Proprietari"],
   ["contracts", FileText, "Contratti"],
   ["tenants", Users, "Inquilini"],
-  ["collections", Coins, "Incassi"],
-  ["movements", ReceiptText, "Movimenti"],
-  ["deadlines", CalendarClock, "Scadenze"],
-  ["reports", WalletCards, "Report"],
+  ["movements", WalletCards, "Movimenti"],
 ] as const;
 
 const sectionMeta: Record<Section, { title: string; subtitle: string }> = {
@@ -57,18 +52,9 @@ const sectionMeta: Record<Section, { title: string; subtitle: string }> = {
     title: "Inquilini",
     subtitle: "Anagrafiche, contratti e morosità",
   },
-  collections: {
-    title: "Incassi",
-    subtitle: "Canoni da registrare e stato pagamenti",
-  },
   movements: {
     title: "Movimenti",
-    subtitle: "Entrate, uscite e trasferimenti",
-  },
-  deadlines: { title: "Scadenze", subtitle: "Adempimenti aperti e completati" },
-  reports: {
-    title: "Report",
-    subtitle: "Analisi economiche, saldi e previsioni",
+    subtitle: "Registro unico con entrate, uscite e trasferimenti",
   },
 };
 
@@ -122,21 +108,7 @@ export function AppShell({
   authControls?: ReactNode;
   children: ReactNode;
 }) {
-  const [toast, setToast] = useState("");
   const meta = sectionMeta[section];
-
-  useEffect(() => {
-    const onToast = (event: Event) => {
-      setToast(
-        String(
-          (event as CustomEvent<string>).detail ?? "Operazione completata",
-        ),
-      );
-      window.setTimeout(() => setToast(""), 2400);
-    };
-    window.addEventListener("opsn:toast", onToast);
-    return () => window.removeEventListener("opsn:toast", onToast);
-  }, []);
 
   return (
     <SidebarProvider>
@@ -166,11 +138,7 @@ export function AppShell({
         <main className="mx-auto mt-4 w-full max-w-[84rem] px-3 py-4 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:px-6 sm:py-6 lg:pb-6">
           {children}
         </main>
-        {toast ? (
-          <div className="fixed right-4 top-4 z-[60] rounded-lg border border-emerald-950/10 bg-white px-4 py-3 text-sm font-medium text-stone-900 shadow-lg shadow-emerald-950/10">
-            {toast}
-          </div>
-        ) : null}
+        <Toaster richColors position="top-right" />
         <BottomNav section={section} onSectionChange={onSectionChange} />
       </SidebarInset>
     </SidebarProvider>
@@ -185,7 +153,7 @@ function BottomNav({
   onSectionChange: (section: Section) => void;
 }) {
   const items = nav.filter(([key]) =>
-    ["dashboard", "properties", "collections", "movements", "reports"].includes(
+    ["dashboard", "properties", "contracts", "tenants", "movements"].includes(
       key,
     ),
   );

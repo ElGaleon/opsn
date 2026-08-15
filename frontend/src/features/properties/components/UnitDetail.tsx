@@ -1,4 +1,6 @@
-import { ArrowLeft, Pencil } from "lucide-react";
+import { FileText, Plus } from "lucide-react";
+import { useState } from "react";
+import { DetailHeader } from "@shared/components/DetailHeader";
 import { ReadOnly } from "@shared/components/ReadOnly";
 import { Button } from "@shared/components/ui/button";
 import {
@@ -8,12 +10,12 @@ import {
   CardTitle,
 } from "@shared/components/ui/card";
 import { Property, Unit } from "@shared/lib/api";
-import { eur } from "@shared/lib/utils";
+import { eur, formatDate } from "@shared/lib/utils";
 import { Data } from "@app/types/app";
 import { OwnershipDonut } from "./OwnershipDonut";
 import { ShareManager } from "./ShareManager";
 import { PropertyStats } from "./PropertyStats";
-import { statsFor } from "../utils/propertyUtils";
+import { statsFor, unitTypeLabel } from "../utils/propertyUtils";
 
 export function UnitDetail({
   data,
@@ -32,69 +34,103 @@ export function UnitDetail({
   onBack: () => void;
   onEdit: () => void;
 }) {
+  const [shareEditing, setShareEditing] = useState(false);
   const movements = data.movements.filter((item) => item.unit_id === unit.id);
   const contracts = data.contracts.filter((item) => item.unit_id === unit.id);
   return (
     <div className="space-y-4">
       <Card>
-        <CardHeader className="flex-row items-center justify-between space-y-0">
-          <CardTitle>Dettaglio unità · {parent?.name}</CardTitle>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={onBack}>
-              <ArrowLeft size={16} /> Indietro
-            </Button>
-            <Button onClick={onEdit}>
-              <Pencil size={16} /> Modifica
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
+        <DetailHeader
+          eyebrow="Dettaglio unità"
+          title={unit.name}
+          subtitle={parent?.name ?? "Immobile non assegnato"}
+          onBack={onBack}
+          onEdit={onEdit}
+        />
+        <CardContent className="space-y-5 pt-4 sm:pt-5">
           <PropertyStats stats={statsFor(movements)} />
           <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-            <div className="grid gap-3 md:grid-cols-2">
+            <div className="grid content-start gap-3 md:grid-cols-2">
               <ReadOnly label="Nome" value={unit.name} />
-              <ReadOnly label="Tipologia" value={unit.unit_type} />
+              <ReadOnly label="Tipologia" value={unitTypeLabel(unit.unit_type)} />
               <ReadOnly label="Immobile" value={parent?.name ?? ""} />
               <ReadOnly label="Note" value={unit.notes ?? ""} />
             </div>
-            <div className="rounded-lg border border-emerald-950/10 bg-white/80 p-3">
-              <p className="px-1 text-sm font-semibold text-stone-900">
-                Divisione quote
-              </p>
-              <OwnershipDonut data={data} unitId={unit.id} />
+            <div className="rounded-lg border border-emerald-950/10 bg-white/95 p-4 shadow-sm shadow-emerald-950/5">
+              <div className="mb-3 flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-base font-semibold text-stone-950">
+                    Divisione quote
+                  </p>
+                  <p className="text-sm text-stone-500">
+                    Ripartizione corrente dell'unità
+                  </p>
+                </div>
+                {!shareEditing ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setShareEditing(true)}
+                  >
+                    <Plus size={16} /> Modifica quote
+                  </Button>
+                ) : null}
+              </div>
+              {shareEditing ? (
+                <ShareManager
+                  data={data}
+                  unitId={unit.id}
+                  reload={reload}
+                  getToken={getToken}
+                  defaultEditing
+                  onClose={() => setShareEditing(false)}
+                />
+              ) : (
+                <OwnershipDonut
+                  data={data}
+                  unitId={unit.id}
+                  onEdit={() => setShareEditing(true)}
+                />
+              )}
             </div>
           </div>
         </CardContent>
       </Card>
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4">
         <Card>
-          <CardHeader>
+          <CardHeader className="border-b border-emerald-950/10 bg-white/70">
             <CardTitle>Contratti unità</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="grid gap-3 pt-4 sm:grid-cols-2 xl:grid-cols-3">
             {contracts.map((contract) => (
               <div
                 key={contract.id}
-                className="rounded-md border border-zinc-200 p-3 text-sm"
+                className="rounded-lg border border-stone-200 bg-white p-4 text-sm shadow-sm shadow-stone-950/5"
               >
-                {contract.tenant_name} ·{" "}
-                {eur.format(Number(contract.monthly_rent))} ·{" "}
-                {contract.starts_on} / {contract.ends_on ?? "aperto"}
+                <div className="flex items-start gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-stone-100 text-emerald-700">
+                    <FileText size={17} />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="truncate font-semibold text-stone-950">
+                      {contract.tenant_name}
+                    </p>
+                    <p className="mt-1 text-stone-600">
+                      {eur.format(Number(contract.monthly_rent))} / mese
+                    </p>
+                    <p className="mt-2 text-xs text-stone-500">
+                      {formatDate(contract.starts_on)} /{" "}
+                      {contract.ends_on ? formatDate(contract.ends_on) : "aperto"}
+                    </p>
+                  </div>
+                </div>
               </div>
             ))}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Quote unità</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ShareManager
-              data={data}
-              unitId={unit.id}
-              reload={reload}
-              getToken={getToken}
-            />
+            {!contracts.length ? (
+              <div className="rounded-lg border border-dashed border-emerald-950/15 bg-white/70 p-6 text-sm text-stone-500 sm:col-span-2 xl:col-span-3">
+                Nessun contratto collegato.
+              </div>
+            ) : null}
           </CardContent>
         </Card>
       </div>

@@ -1,3 +1,5 @@
+import { notifyToast } from "@shared/lib/toast";
+
 const configuredApiUrl =
   import.meta.env.VITE_API_URL ?? "http://localhost:8000";
 const isPublicHost = !["localhost", "127.0.0.1"].includes(
@@ -15,11 +17,18 @@ function notifyMutation(method?: string) {
     PUT: "Modifiche salvate",
     DELETE: "Elemento eliminato",
   };
-  window.dispatchEvent(
-    new CustomEvent("opsn:toast", {
-      detail: messages[method] ?? "Operazione completata",
-    }),
-  );
+  notifyToast(messages[method] ?? "Operazione completata");
+}
+
+async function errorMessage(response: Response) {
+  const text = await response.text();
+  try {
+    const parsed = JSON.parse(text) as { detail?: unknown };
+    if (typeof parsed.detail === "string") return parsed.detail;
+  } catch {
+    return text || "Operazione non riuscita";
+  }
+  return text || "Operazione non riuscita";
 }
 
 export type Owner = {
@@ -47,8 +56,6 @@ export type Property = {
   province?: string | null;
   region?: string | null;
   country?: string | null;
-  latitude?: string | null;
-  longitude?: string | null;
   purchase_value: string;
   mortgage: string;
   condo_fees: string;
@@ -107,14 +114,6 @@ export type Movement = {
   payment_method?: string | null;
   paid_amount?: string | null;
   allocations: Allocation[];
-};
-export type Deadline = {
-  id: string;
-  title: string;
-  due_date: string;
-  status: string;
-  property_id?: string | null;
-  unit_id?: string | null;
 };
 export type OwnerTransfer = {
   id: string;
@@ -175,7 +174,11 @@ export async function api<T>(
       ...init?.headers,
     },
   });
-  if (!response.ok) throw new Error(await response.text());
+  if (!response.ok) {
+    const message = await errorMessage(response);
+    notifyToast(message, "error");
+    throw new Error(message);
+  }
   notifyMutation(init?.method);
   return response.json();
 }

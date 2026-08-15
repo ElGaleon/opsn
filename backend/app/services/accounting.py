@@ -121,7 +121,7 @@ def sync_contract_rent_movements(db: Session, contract: models.LeaseContract) ->
                 status="unpaid",
                 allocation_mode="ownership",
             )
-            movement = models.Movement(**payload.model_dump(exclude={"allocations"}))
+            movement = models.Movement(**payload.model_dump(exclude={"allocations", "paid_amount"}))
             try:
                 build_allocations(db, movement, payload)
             except HTTPException:

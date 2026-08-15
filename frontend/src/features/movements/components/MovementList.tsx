@@ -1,14 +1,18 @@
-import { Plus } from "lucide-react";
+import { ArrowRight, Plus } from "lucide-react";
 import { ListFilters } from "@shared/components/ListFilters";
 import { SectionPanel } from "@shared/components/SectionPanel";
-import { Stat } from "@shared/components/Stat";
 import { Badge } from "@shared/components/ui/badge";
 import { Button } from "@shared/components/ui/button";
 import { Table, Td, Th } from "@shared/components/ui/table";
 import { Movement } from "@shared/lib/api";
-import { eur } from "@shared/lib/utils";
+import { eur, formatDate } from "@shared/lib/utils";
 import { Data } from "@app/types/app";
-import { ownerName } from "../utils/movementUtils";
+import {
+  movementTypeLabel,
+  ownerName,
+  paymentStatusClass,
+  paymentStatusLabel,
+} from "../utils/movementUtils";
 
 export function MovementList({
   data,
@@ -33,34 +37,52 @@ export function MovementList({
   onNew: () => void;
   onSelect: (id: string) => void;
 }) {
+  const title =
+    typeFilter === "income"
+      ? "Entrate"
+      : typeFilter === "expense"
+        ? "Uscite"
+        : typeFilter === "transfer"
+          ? "Trasferimenti"
+          : "Registro movimenti";
   return (
     <SectionPanel
-      title="Registro movimenti"
+      title={title}
       actions={
         <Button onClick={onNew}>
           <Plus size={16} /> Movimento
         </Button>
       }
       stats={
-        <div className="grid grid-cols-3 gap-2 sm:gap-3">
-          <Stat label="Movimenti" value={movements.length} />
-          <Stat
-            label="Entrate"
-            value={eur.format(
-              movements
-                .filter((movement) => movement.type === "income")
-                .reduce((sum, movement) => sum + Number(movement.amount), 0),
-            )}
-            tone="good"
+        <div className="grid gap-2 sm:grid-cols-3 sm:gap-3">
+          <MovementTypeCard
+            label="Tutti"
+            value={data.movements.length}
+            active={typeFilter === "all"}
+            onClick={() => {
+              onTypeFilter("all");
+              onStatusFilter("all");
+            }}
           />
-          <Stat
+          <MovementTypeCard
+            label="Entrate"
+            value={eur.format(totalByType(data.movements, "income"))}
+            tone="good"
+            active={typeFilter === "income"}
+            onClick={() => {
+              onTypeFilter("income");
+              onStatusFilter("all");
+            }}
+          />
+          <MovementTypeCard
             label="Uscite"
-            value={eur.format(
-              movements
-                .filter((movement) => movement.type === "expense")
-                .reduce((sum, movement) => sum + Number(movement.amount), 0),
-            )}
+            value={eur.format(totalByType(data.movements, "expense"))}
             tone="bad"
+            active={typeFilter === "expense"}
+            onClick={() => {
+              onTypeFilter("expense");
+              onStatusFilter("all");
+            }}
           />
         </div>
       }
@@ -113,12 +135,18 @@ export function MovementList({
               className="cursor-pointer hover:bg-emerald-50/70"
               onClick={() => onSelect(movement.id)}
             >
-              <Td>{movement.accrual_date}</Td>
+              <Td>{formatDate(movement.accrual_date)}</Td>
               <Td>{movement.description}</Td>
               <Td>{movement.category}</Td>
               <Td>
-                <Badge>
-                  {movement.type === "transfer" ? "transfer" : movement.status}
+                <Badge
+                  className={paymentStatusClass(
+                    movement.type === "transfer" ? null : movement.status,
+                  )}
+                >
+                  {movement.type === "transfer"
+                    ? movementTypeLabel(movement.type)
+                    : paymentStatusLabel(movement.status)}
                 </Badge>
               </Td>
               <Td>
@@ -142,5 +170,56 @@ export function MovementList({
         </tbody>
       </Table>
     </SectionPanel>
+  );
+}
+
+function totalByType(movements: Movement[], type: Movement["type"]) {
+  return movements
+    .filter((movement) => movement.type === type)
+    .reduce((sum, movement) => sum + Number(movement.amount), 0);
+}
+
+function MovementTypeCard({
+  label,
+  value,
+  active,
+  tone = "default",
+  onClick,
+}: {
+  label: string;
+  value: string | number;
+  active: boolean;
+  tone?: "default" | "good" | "bad";
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className={`group rounded-lg border bg-white/95 p-3 text-left shadow-sm shadow-emerald-950/5 transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md sm:p-4 ${
+        active ? "border-emerald-500 ring-2 ring-emerald-100" : "border-emerald-950/10"
+      }`}
+      onClick={onClick}
+    >
+      <span className="flex items-center justify-between gap-3">
+        <span className="text-[11px] font-medium uppercase text-stone-500 sm:text-xs">
+          {label}
+        </span>
+        <ArrowRight
+          size={16}
+          className="text-stone-400 transition group-hover:translate-x-0.5 group-hover:text-emerald-700"
+        />
+      </span>
+      <span
+        className={`mt-2 block truncate text-lg font-semibold leading-tight sm:text-xl ${
+          tone === "good"
+            ? "text-emerald-700"
+            : tone === "bad"
+              ? "text-amber-700"
+              : "text-stone-950"
+        }`}
+      >
+        {value}
+      </span>
+    </button>
   );
 }

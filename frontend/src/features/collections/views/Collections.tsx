@@ -8,7 +8,7 @@ import { Input } from "@shared/components/ui/input";
 import { Select } from "@shared/components/ui/select";
 import { Table, Td, Th } from "@shared/components/ui/table";
 import { api, Movement } from "@shared/lib/api";
-import { eur } from "@shared/lib/utils";
+import { eur, formatDate } from "@shared/lib/utils";
 import { Data } from "@app/types/app";
 
 const today = () => new Date().toISOString().slice(0, 10);
@@ -127,6 +127,17 @@ export function Collections({
     <div className="space-y-4">
       <SectionPanel
         title="Incasso canoni"
+        actions={
+          <label className="flex items-center gap-2 text-sm text-stone-600">
+            Mese
+            <Input
+              type="month"
+              className="w-40"
+              value={month}
+              onChange={(event) => setMonth(event.target.value)}
+            />
+          </label>
+        }
         stats={
           <div className="grid grid-cols-3 gap-2 sm:gap-3">
             <Stat label="Canoni filtrati" value={eur.format(totals.due)} />
@@ -157,13 +168,7 @@ export function Collections({
                 ],
               },
             ]}
-          >
-            <Input
-              type="month"
-              value={month}
-              onChange={(event) => setMonth(event.target.value)}
-            />
-          </ListFilters>
+          />
         }
       >
         <Table className="min-w-[980px]">
@@ -206,7 +211,7 @@ export function Collections({
                     </span>
                   </Td>
                   <Td>{unit?.name ?? "—"}</Td>
-                  <Td>{movement.due_date ?? movement.accrual_date}</Td>
+                  <Td>{formatDate(movement.due_date ?? movement.accrual_date)}</Td>
                   <Td>{eur.format(Number(movement.amount))}</Td>
                   <Td>
                     <Input

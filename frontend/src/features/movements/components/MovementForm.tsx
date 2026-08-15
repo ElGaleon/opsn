@@ -1,14 +1,7 @@
-import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { ComponentProps } from "react";
 import { UseFormReturn } from "react-hook-form";
+import { EntityForm } from "@shared/components/EntityForm";
 import { Field } from "@shared/components/Field";
-import { Button } from "@shared/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@shared/components/ui/card";
 import { Input } from "@shared/components/ui/input";
 import { Select } from "@shared/components/ui/select";
 import { eur } from "@shared/lib/utils";
@@ -25,6 +18,7 @@ export function MovementForm({
   onBack,
   onDelete,
   onSubmit,
+  onInvalid,
 }: {
   data: Data;
   form: UseFormReturn<MovementFormValues>;
@@ -34,6 +28,7 @@ export function MovementForm({
   onBack: () => void;
   onDelete: () => void;
   onSubmit: (values: MovementFormValues) => void;
+  onInvalid: () => void;
 }) {
   const propertyId = form.watch("property_id");
   const unitId = form.watch("unit_id");
@@ -54,22 +49,16 @@ export function MovementForm({
   );
 
   return (
-    <Card>
-      <CardHeader className="flex-row items-center justify-between space-y-0">
-        <CardTitle>
-          {isEditing ? "Dettaglio movimento" : "Nuovo movimento"}
-        </CardTitle>
-        <Button variant="outline" onClick={onBack}>
-          <ArrowLeft size={16} /> Indietro
-        </Button>
-      </CardHeader>
-      <CardContent>
-        <form
-          className="max-w-2xl space-y-3"
-          onSubmit={form.handleSubmit(onSubmit)}
-        >
+    <EntityForm
+      title={isEditing ? "Dettaglio movimento" : "Nuovo movimento"}
+      isEditing={isEditing}
+      onBack={onBack}
+      onDelete={onDelete}
+      onSubmit={form.handleSubmit(onSubmit, onInvalid)}
+      isDirty={form.formState.isDirty}
+    >
           {movementType !== "transfer" ? (
-            <Field label="Immobile">
+            <Field label="Immobile" error={form.formState.errors.property_id?.message}>
               <Select {...form.register("property_id")}>
                 {data.properties.map((property) => (
                   <option key={property.id} value={property.id}>
@@ -80,7 +69,7 @@ export function MovementForm({
             </Field>
           ) : null}
           {movementType !== "transfer" ? (
-            <Field label="Unità">
+            <Field label="Unità" error={form.formState.errors.unit_id?.message}>
               <Select {...form.register("unit_id")}>
                 <option value="">Immobile intero</option>
                 {units.map((unit) => (
@@ -92,7 +81,7 @@ export function MovementForm({
             </Field>
           ) : null}
           <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Tipo">
+            <Field label="Tipo" error={form.formState.errors.type?.message}>
               <Select {...form.register("type")}>
                 <option value="income">Entrata</option>
                 <option value="expense">Uscita</option>
@@ -100,7 +89,7 @@ export function MovementForm({
               </Select>
             </Field>
             {movementType !== "transfer" ? (
-              <Field label="Stato">
+              <Field label="Stato" error={form.formState.errors.status?.message}>
                 <Select {...form.register("status")}>
                   <option value="paid">Pagato</option>
                   <option value="partial">Parziale</option>
@@ -109,13 +98,13 @@ export function MovementForm({
               </Field>
             ) : null}
           </div>
-          <Field label="Categoria">
+          <Field label="Categoria" error={form.formState.errors.category?.message}>
             <Input {...form.register("category")} />
           </Field>
-          <Field label="Descrizione">
+          <Field label="Descrizione" error={form.formState.errors.description?.message}>
             <Input {...form.register("description")} />
           </Field>
-          <Field label="Importo">
+          <Field label="Importo" error={form.formState.errors.amount?.message}>
             <Input type="number" step="0.01" {...form.register("amount")} />
           </Field>
           {movementStatus === "partial" ? (
@@ -125,6 +114,7 @@ export function MovementForm({
                   ? "Importo incassato"
                   : "Importo pagato"
               }
+              error={form.formState.errors.paid_amount?.message}
             >
               <Input
                 type="number"
@@ -135,13 +125,13 @@ export function MovementForm({
             </Field>
           ) : null}
           <div className="grid gap-3 sm:grid-cols-3">
-            <Field label="Competenza">
+            <Field label="Competenza" error={form.formState.errors.accrual_date?.message}>
               <Input type="date" {...form.register("accrual_date")} />
             </Field>
-            <Field label="Scadenza">
+            <Field label="Scadenza" error={form.formState.errors.due_date?.message}>
               <Input type="date" {...form.register("due_date")} />
             </Field>
-            <Field label="Pagamento">
+            <Field label="Pagamento" error={form.formState.errors.payment_date?.message}>
               <Input type="date" {...form.register("payment_date")} />
             </Field>
           </div>
@@ -176,19 +166,7 @@ export function MovementForm({
               onChange={onCustomAllocations}
             />
           ) : null}
-          <div className="flex justify-end gap-2">
-            <Button>
-              <Plus size={16} /> Salva
-            </Button>
-            {isEditing ? (
-              <Button type="button" variant="outline" onClick={onDelete}>
-                <Trash2 size={16} /> Elimina
-              </Button>
-            ) : null}
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+    </EntityForm>
   );
 }
 
@@ -203,7 +181,10 @@ function CashFields({
 }) {
   return (
     <div className="grid gap-3 sm:grid-cols-2">
-      <Field label={movementType === "income" ? "Incassato da" : "Pagato da"}>
+      <Field
+        label={movementType === "income" ? "Incassato da" : "Pagato da"}
+        error={form.formState.errors.paid_by_owner_id?.message}
+      >
         <OwnerSelect data={data} {...form.register("paid_by_owner_id")} />
       </Field>
       <PaymentMethod form={form} />
@@ -220,10 +201,10 @@ function TransferFields({
 }) {
   return (
     <div className="grid gap-3 sm:grid-cols-2">
-      <Field label="Da">
+      <Field label="Da" error={form.formState.errors.paid_by_owner_id?.message}>
         <OwnerSelect data={data} {...form.register("paid_by_owner_id")} />
       </Field>
-      <Field label="A">
+      <Field label="A" error={form.formState.errors.transfer_to_owner_id?.message}>
         <OwnerSelect data={data} {...form.register("transfer_to_owner_id")} />
       </Field>
     </div>
@@ -238,7 +219,10 @@ function OwnerCharge({
   form: UseFormReturn<MovementFormValues>;
 }) {
   return (
-    <Field label="Proprietario a carico">
+    <Field
+      label="Proprietario a carico"
+      error={form.formState.errors.paid_by_owner_id?.message}
+    >
       <OwnerSelect data={data} {...form.register("paid_by_owner_id")} />
     </Field>
   );

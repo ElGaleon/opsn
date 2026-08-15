@@ -27,7 +27,16 @@ export function SectionPanel({
       <SectionHero title={title} actions={actions} tone={tone}></SectionHero>
       {stats ? <div>{stats}</div> : null}
       <SectionFilters filters={filters} tone={tone}></SectionFilters>
-      <div className={cn(className, contentClassName)}>{children}</div>
+      <div
+        className={cn(
+          tone === "dark" &&
+            "rounded-lg border border-emerald-900 bg-emerald-800 p-4 shadow-sm shadow-emerald-950/10",
+          className,
+          contentClassName,
+        )}
+      >
+        {children}
+      </div>
     </div>
   );
 }

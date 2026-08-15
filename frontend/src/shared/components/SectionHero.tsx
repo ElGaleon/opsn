@@ -13,10 +13,10 @@ export function SectionHero({
   return (
     <div
       className={cn(
-        "flex w-full flex-col gap-2 rounded-lg border p-3 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:border-transparent sm:bg-transparent sm:p-0 sm:shadow-none",
+        "flex w-full flex-col gap-2 rounded-lg border p-3 shadow-sm sm:flex-row sm:items-center sm:justify-between",
         tone === "dark"
-          ? "border-white/15 bg-white/10 shadow-black/10"
-          : "border-emerald-950/10 bg-white/70 shadow-emerald-950/5",
+          ? "border-emerald-900 bg-emerald-800 shadow-emerald-950/10"
+          : "border-emerald-950/10 bg-white/70 shadow-emerald-950/5 sm:border-transparent sm:bg-transparent sm:p-0 sm:shadow-none",
       )}
     >
       <h2

@@ -3,6 +3,7 @@ import { EntityForm } from "@shared/components/EntityForm";
 import { Field } from "@shared/components/Field";
 import { Input } from "@shared/components/ui/input";
 import { Textarea } from "@shared/components/ui/textarea";
+import { notifyInvalidSubmit } from "@shared/lib/toast";
 import { PropertyFormValues } from "../types/propertyTypes";
 import { composeAddress } from "../utils/propertyUtils";
 
@@ -27,7 +28,8 @@ export function PropertyForm({
       isEditing={isEditing}
       onBack={onBack}
       onDelete={onDelete}
-      onSubmit={form.handleSubmit(onSubmit)}
+      onSubmit={form.handleSubmit(onSubmit, notifyInvalidSubmit)}
+      isDirty={form.formState.isDirty}
     >
       <Field label="Nome" error={form.formState.errors.name?.message}>
         <Input {...form.register("name")} autoComplete="off" />
@@ -65,39 +67,30 @@ export function PropertyForm({
           <Input {...form.register("country")} autoComplete="country-name" />
         </Field>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field
-          label="Latitudine"
-          error={form.formState.errors.latitude?.message}
-        >
-          <Input type="number" step="0.000001" {...form.register("latitude")} />
-        </Field>
-        <Field
-          label="Longitudine"
-          error={form.formState.errors.longitude?.message}
-        >
-          <Input
-            type="number"
-            step="0.000001"
-            {...form.register("longitude")}
-          />
-        </Field>
-      </div>
       <Field label="Indirizzo completo">
         <Input value={addressPreview} readOnly />
       </Field>
       <div className="grid gap-4 sm:grid-cols-3">
-        <Field label="Valore acquisto">
+        <Field
+          label="Valore acquisto"
+          error={form.formState.errors.purchase_value?.message}
+        >
           <Input
             type="number"
             step="0.01"
             {...form.register("purchase_value")}
           />
         </Field>
-        <Field label="Mutuo residuo">
+        <Field
+          label="Mutuo residuo"
+          error={form.formState.errors.mortgage?.message}
+        >
           <Input type="number" step="0.01" {...form.register("mortgage")} />
         </Field>
-        <Field label="Condominio mensile">
+        <Field
+          label="Condominio mensile"
+          error={form.formState.errors.condo_fees?.message}
+        >
           <Input type="number" step="0.01" {...form.register("condo_fees")} />
         </Field>
       </div>

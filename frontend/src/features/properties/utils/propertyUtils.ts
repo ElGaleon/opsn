@@ -16,8 +16,6 @@ export const propertyValues = (property?: Property): PropertyFormValues => ({
   province: property?.province ?? "",
   region: property?.region ?? "",
   country: property?.country ?? "Italia",
-  latitude: property?.latitude ? Number(property.latitude) : undefined,
-  longitude: property?.longitude ? Number(property.longitude) : undefined,
   purchase_value: Number(property?.purchase_value ?? 0),
   mortgage: Number(property?.mortgage ?? 0),
   condo_fees: Number(property?.condo_fees ?? 0),
@@ -56,6 +54,18 @@ export const unitValues = (
   unit_type: (unit?.unit_type as UnitFormValues["unit_type"]) ?? "apartment",
   notes: unit?.notes ?? "",
 });
+
+const unitTypeLabels: Record<string, string> = {
+  apartment: "Appartamento",
+  garage: "Garage",
+  room: "Stanza",
+  commercial: "Locale commerciale",
+  other: "Altro",
+};
+
+export function unitTypeLabel(type?: string | null) {
+  return type ? (unitTypeLabels[type] ?? type) : "";
+}
 
 export function statsFor(movements: Data["movements"]): MoneyStats {
   const income = movements

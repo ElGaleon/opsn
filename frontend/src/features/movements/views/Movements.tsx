@@ -5,6 +5,7 @@ import { MovementDetail } from "../components/MovementDetail";
 import { MovementForm } from "../components/MovementForm";
 import { MovementList } from "../components/MovementList";
 import { api, Movement } from "@shared/lib/api";
+import { notifyInvalidSubmit } from "@shared/lib/toast";
 import { movementSchema } from "@shared/schemas/forms";
 import { Data } from "@app/types/app";
 import { MovementFormValues } from "../types/movementTypes";
@@ -157,6 +158,7 @@ export function Movements({
         }}
         onDelete={remove}
         onSubmit={submit}
+        onInvalid={notifyInvalidSubmit}
       />
     );
   }

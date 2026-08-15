@@ -65,8 +65,6 @@ export function Properties({
     const payload = {
       ...values,
       address: composeAddress(values),
-      latitude: values.latitude ?? null,
-      longitude: values.longitude ?? null,
     };
     const saved = await api<Property>(
       property ? `/properties/${property.id}` : "/properties",

@@ -12,15 +12,13 @@ import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import {
   Contract,
-  Deadline,
   Forecast,
   Movement,
   Property,
   Summary,
   Unit,
 } from "@shared/lib/api";
-import { eur } from "@shared/lib/utils";
-import { DeadlineList } from "@features/deadlines/components/DeadlineList";
+import { eur, formatDate } from "@shared/lib/utils";
 import { MovementTable } from "@features/movements/components/MovementTable";
 import { SectionPanel } from "@shared/components/SectionPanel";
 import { Button } from "@shared/components/ui/button";
@@ -50,7 +48,6 @@ export function Dashboard({
   units,
   contracts,
   movements,
-  deadlines,
   forecast,
 }: {
   summary: Summary | null;
@@ -58,7 +55,6 @@ export function Dashboard({
   units: Unit[];
   contracts: Contract[];
   movements: Movement[];
-  deadlines: Deadline[];
   forecast: Forecast | null;
 }) {
   const [view, setView] = useState<
@@ -93,7 +89,6 @@ export function Dashboard({
     units,
     contracts,
     movements,
-    deadlines,
     rows,
     currentYear,
   );
@@ -199,9 +194,8 @@ export function Dashboard({
         <MonthlyTable rows={rows} year={currentYear} />
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[1.35fr_0.65fr]">
+      <div className="grid gap-4">
         <MovementTable movements={movements.slice(0, 6)} />
-        <DeadlineList deadlines={deadlines.slice(0, 5)} />
       </div>
     </div>
   );
@@ -697,7 +691,7 @@ function ArrearsStatsDetail({
               )
               .map((movement) => (
                 <tr key={movement.id}>
-                  <Td>{movement.due_date ?? movement.accrual_date}</Td>
+                  <Td>{formatDate(movement.due_date ?? movement.accrual_date)}</Td>
                   <Td>{movement.description}</Td>
                   <Td>{movement.category}</Td>
                   <Td className="text-right text-amber-700">

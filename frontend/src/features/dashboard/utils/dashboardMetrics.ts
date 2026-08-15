@@ -1,6 +1,5 @@
 import {
   Contract,
-  Deadline,
   Forecast,
   Movement,
   Property,
@@ -105,14 +104,11 @@ export function buildExtraMetrics(
   units: Unit[],
   contracts: Contract[],
   movements: Movement[],
-  deadlines: Deadline[],
   rows: YearRow[],
   year: number,
 ) {
   const today = new Date();
   const todayIso = today.toISOString().slice(0, 10);
-  const in30Days = new Date(today);
-  in30Days.setDate(today.getDate() + 30);
   const in180Days = new Date(today);
   in180Days.setDate(today.getDate() + 180);
   const annual = rows.reduce(
@@ -150,12 +146,6 @@ export function buildExtraMetrics(
       )
     : 0;
   const activeUnits = countRentedUnits(units, contracts, todayIso);
-  const upcomingDeadlines = deadlines.filter(
-    (deadline) =>
-      deadline.status !== "done" &&
-      deadline.due_date >= todayIso &&
-      deadline.due_date <= in30Days.toISOString().slice(0, 10),
-  ).length;
   const expiringContracts = contracts.filter(
     (contract) =>
       contract.ends_on &&
@@ -190,7 +180,6 @@ export function buildExtraMetrics(
       ? Math.round((annual.expenses / annual.income) * 100)
       : 0,
     netYield: purchaseValue ? (annual.net / purchaseValue) * 100 : 0,
-    upcomingDeadlines,
     expiringContracts,
     topProperty: propertyNet ?? null,
   };

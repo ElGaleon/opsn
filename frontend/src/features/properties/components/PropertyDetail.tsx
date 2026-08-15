@@ -1,13 +1,11 @@
-import { ArrowLeft, Pencil } from "lucide-react";
-import Map, { Marker, NavigationControl } from "react-map-gl/maplibre";
-import "maplibre-gl/dist/maplibre-gl.css";
+import { Plus } from "lucide-react";
+import { useRef, useState } from "react";
+import { DetailHeader } from "@shared/components/DetailHeader";
 import { ReadOnly } from "@shared/components/ReadOnly";
 import { Button } from "@shared/components/ui/button";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
 } from "@shared/components/ui/card";
 import { Property } from "@shared/lib/api";
 import { eur } from "@shared/lib/utils";
@@ -38,12 +36,11 @@ export function PropertyDetail({
   onSelectUnit: (id: string) => void;
 }) {
   const units = data.units.filter((item) => item.property_id === property.id);
+  const [shareEditing, setShareEditing] = useState(false);
+  const unitsRef = useRef<HTMLDivElement>(null);
   const movements = data.movements.filter(
     (item) => item.property_id === property.id,
   );
-  const latitude = property.latitude ? Number(property.latitude) : null;
-  const longitude = property.longitude ? Number(property.longitude) : null;
-  const hasPosition = latitude !== null && longitude !== null;
   const hasStructuredAddress = Boolean(
     property.street ||
       property.city ||
@@ -54,21 +51,26 @@ export function PropertyDetail({
   return (
     <div className="space-y-4">
       <Card>
-        <CardHeader className="flex-row items-center justify-between space-y-0">
-          <CardTitle>Dettaglio immobile</CardTitle>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={onBack}>
-              <ArrowLeft size={16} /> Indietro
-            </Button>
-            <Button onClick={onEdit}>
-              <Pencil size={16} /> Modifica
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <PropertyStats stats={statsFor(movements)} />
+        <DetailHeader
+          eyebrow="Dettaglio immobile"
+          title={property.name}
+          subtitle={property.address || "Indirizzo non disponibile"}
+          onBack={onBack}
+          onEdit={onEdit}
+        />
+        <CardContent className="space-y-5 pt-4 sm:pt-5">
+          <PropertyStats
+            stats={statsFor(movements)}
+            unitCount={units.length}
+            onUnitsClick={() =>
+              unitsRef.current?.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              })
+            }
+          />
           <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-            <div className="grid gap-3 md:grid-cols-2">
+            <div className="grid content-start gap-3 md:grid-cols-2">
               <ReadOnly label="Nome" value={property.name} />
               {!hasStructuredAddress ? (
                 <ReadOnly label="Indirizzo" value={property.address} />
@@ -101,75 +103,53 @@ export function PropertyDetail({
               />
               <ReadOnly label="Note" value={property.notes ?? ""} />
             </div>
-            <div className="rounded-lg border border-emerald-950/10 bg-white/80 p-3">
-              <p className="px-1 text-sm font-semibold text-stone-900">
-                Divisione quote
-              </p>
-              <OwnershipDonut data={data} propertyId={property.id} />
+            <div className="rounded-lg border border-emerald-950/10 bg-white/95 p-4 shadow-sm shadow-emerald-950/5">
+              <div className="mb-3 flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-base font-semibold text-stone-950">
+                    Divisione quote
+                  </p>
+                  <p className="text-sm text-stone-500">
+                    Ripartizione corrente della proprietà
+                  </p>
+                </div>
+                {!shareEditing ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setShareEditing(true)}
+                  >
+                    <Plus size={16} /> Modifica quote
+                  </Button>
+                ) : null}
+              </div>
+              {shareEditing ? (
+                <ShareManager
+                  data={data}
+                  propertyId={property.id}
+                  reload={reload}
+                  getToken={getToken}
+                  defaultEditing
+                  onClose={() => setShareEditing(false)}
+                />
+              ) : (
+                <OwnershipDonut
+                  data={data}
+                  propertyId={property.id}
+                  onEdit={() => setShareEditing(true)}
+                />
+              )}
             </div>
           </div>
         </CardContent>
       </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Mappa immobile</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[320px] overflow-hidden rounded-lg border border-emerald-950/10 bg-emerald-50 sm:h-[420px]">
-            {hasPosition ? (
-              <Map
-                initialViewState={{ latitude, longitude, zoom: 15 }}
-                mapStyle="https://demotiles.maplibre.org/style.json"
-                style={{ width: "100%", height: "100%" }}
-              >
-                <NavigationControl position="top-right" />
-                <Marker
-                  latitude={latitude}
-                  longitude={longitude}
-                  anchor="bottom"
-                >
-                  <div className="rounded-full bg-emerald-700 px-3 py-2 text-xs font-semibold text-white shadow-md shadow-emerald-950/30">
-                    {property.name}
-                  </div>
-                </Marker>
-              </Map>
-            ) : (
-              <div className="flex h-full flex-col items-center justify-center p-6 text-center">
-                <p className="text-lg font-semibold text-stone-900">
-                  Coordinate non inserite
-                </p>
-                <p className="mt-2 max-w-md text-sm text-stone-600">
-                  Aggiungi latitudine e longitudine nella scheda immobile per
-                  visualizzare la posizione sulla mappa.
-                </p>
-                <p className="mt-4 rounded-md bg-white px-3 py-2 text-sm text-emerald-800">
-                  {property.address || "Indirizzo non disponibile"}
-                </p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div ref={unitsRef} className="grid scroll-mt-24 gap-4">
         <UnitList
           data={data}
           units={units}
           onNew={onNewUnit}
           onSelect={onSelectUnit}
         />
-        <Card>
-          <CardHeader>
-            <CardTitle>Quote proprietà</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ShareManager
-              data={data}
-              propertyId={property.id}
-              reload={reload}
-              getToken={getToken}
-            />
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

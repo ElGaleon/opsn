@@ -13,6 +13,8 @@ const buttonVariants = cva(
         outline:
           "border border-emerald-950/10 bg-white/85 text-stone-800 hover:bg-emerald-50",
         ghost: "text-stone-700 hover:bg-emerald-50",
+        destructive:
+          "bg-red-600 text-white shadow-sm shadow-red-900/20 hover:bg-red-700",
       },
     },
     defaultVariants: { variant: "default" },

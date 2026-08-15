@@ -134,13 +134,14 @@ class LeaseContract(Base):
     deposit: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=0)
     due_day: Mapped[int] = mapped_column(default=5)
     istat_adjustment: Mapped[bool] = mapped_column(default=False)
+    legacy_tenant_name: Mapped[str] = mapped_column("tenant_name", String(180), default="")
 
     unit: Mapped[Unit] = relationship(back_populates="contracts")
     tenant: Mapped[Tenant] = relationship(back_populates="contracts")
 
     @property
     def tenant_name(self) -> str:
-        return self.tenant.full_name if self.tenant else ""
+        return self.tenant.full_name if self.tenant else self.legacy_tenant_name
 
 
 class Movement(Base):

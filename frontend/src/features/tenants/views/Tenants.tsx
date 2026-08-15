@@ -1,7 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Pencil, Plus, Trash2, UserRound } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { DetailHeader } from "@shared/components/DetailHeader";
+import { EntityForm } from "@shared/components/EntityForm";
 import { Field } from "@shared/components/Field";
 import { ListFilters } from "@shared/components/ListFilters";
 import { SectionPanel } from "@shared/components/SectionPanel";
@@ -17,10 +19,12 @@ import {
 import { Input } from "@shared/components/ui/input";
 import { Table, TableActions, Td, Th } from "@shared/components/ui/table";
 import { api, Tenant } from "@shared/lib/api";
-import { eur } from "@shared/lib/utils";
+import { notifyInvalidSubmit } from "@shared/lib/toast";
+import { eur, formatDate } from "@shared/lib/utils";
 import { tenantSchema } from "@shared/schemas/forms";
 import { Data } from "@app/types/app";
 import { TenantFormValues } from "../types/tenantTypes";
+import { isContractActive, isExpiredOnlyTenant } from "../utils/tenantUtils";
 
 const tenantValues = (tenant?: Tenant): TenantFormValues => ({
   full_name: tenant?.full_name ?? "",
@@ -44,7 +48,9 @@ export function Tenants({
   const [editMode, setEditMode] = useState(false);
   const [search, setSearch] = useState("");
   const [arrearsFilter, setArrearsFilter] = useState("all");
+  const [tenantStatusFilter, setTenantStatusFilter] = useState("active");
   const selected = data.tenants.find((tenant) => tenant.id === selectedId);
+  const today = new Date().toISOString().slice(0, 10);
   const form = useForm<TenantFormValues>({
     resolver: zodResolver(tenantSchema),
     defaultValues: tenantValues(selected),
@@ -80,9 +86,22 @@ export function Tenants({
           (sum, contract) => sum + Number(contract.monthly_rent),
           0,
         );
-        return { tenant, contracts, due, paid, arrears, monthlyRent };
+        const expiredOnly = isExpiredOnlyTenant(
+          tenant.id,
+          data.contracts,
+          today,
+        );
+        return {
+          tenant,
+          contracts,
+          due,
+          paid,
+          arrears,
+          monthlyRent,
+          expiredOnly,
+        };
       }),
-    [data.contracts, data.movements, data.tenants],
+    [data.contracts, data.movements, data.tenants, today],
   );
 
   useEffect(() => {
@@ -119,23 +138,13 @@ export function Tenants({
     return (
       <div className="space-y-4">
         <Card>
-          <CardHeader className="flex-row items-center justify-between space-y-0">
-            <CardTitle>
-              <UserRound className="mr-2 inline" size={18} />
-              {selected.full_name}
-            </CardTitle>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setSelectedId(undefined)}
-              >
-                <ArrowLeft size={16} /> Indietro
-              </Button>
-              <Button onClick={() => setEditMode(true)}>
-                <Pencil size={16} /> Modifica
-              </Button>
-            </div>
-          </CardHeader>
+          <DetailHeader
+            eyebrow="Dettaglio inquilino"
+            title={selected.full_name}
+            subtitle={selected.contacts ?? ""}
+            onBack={() => setSelectedId(undefined)}
+            onEdit={() => setEditMode(true)}
+          />
           <CardContent>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
               <Stat
@@ -176,13 +185,18 @@ export function Tenants({
                     <tr key={contract.id}>
                       <Td>{unit?.name}</Td>
                       <Td>
-                        {contract.starts_on} · {contract.ends_on ?? "aperto"}
+                        {formatDate(contract.starts_on)} ·{" "}
+                        {contract.ends_on
+                          ? formatDate(contract.ends_on)
+                          : "aperto"}
                       </Td>
                       <Td>{eur.format(Number(contract.monthly_rent))}</Td>
                       <Td>{eur.format(Number(contract.deposit))}</Td>
                       <Td>
                         <Badge>
-                          {contract.ends_on ? "con scadenza" : "attivo"}
+                          {isContractActive(contract, today)
+                            ? "attivo"
+                            : "scaduto"}
                         </Badge>
                       </Td>
                     </tr>
@@ -198,51 +212,35 @@ export function Tenants({
 
   if (selectedId !== undefined) {
     return (
-      <Card>
-        <CardHeader className="flex-row items-center justify-between space-y-0">
-          <CardTitle>
-            {selected ? "Dettaglio inquilino" : "Nuovo inquilino"}
-          </CardTitle>
-          <Button
-            variant="outline"
-            onClick={() => {
-              setSelectedId(undefined);
-              setEditMode(false);
-            }}
-          >
-            <ArrowLeft size={16} /> Indietro
-          </Button>
-        </CardHeader>
-        <CardContent>
-          <form
-            className="max-w-2xl space-y-3"
-            onSubmit={form.handleSubmit((values) => save(values, selected?.id))}
-          >
-            <Field label="Nome completo">
-              <Input {...form.register("full_name")} />
-            </Field>
-            <Field label="Codice fiscale / P.IVA">
-              <Input {...form.register("tax_code")} />
-            </Field>
-            <Field label="Contatti">
+      <EntityForm
+        title={selected ? "Dettaglio inquilino" : "Nuovo inquilino"}
+        isEditing={Boolean(selected)}
+        onBack={() => {
+          setSelectedId(undefined);
+          setEditMode(false);
+        }}
+        onDelete={remove}
+        onSubmit={form.handleSubmit(
+          (values) => save(values, selected?.id),
+          notifyInvalidSubmit,
+        )}
+        isDirty={form.formState.isDirty}
+      >
+            <div className="grid gap-4 lg:grid-cols-2">
+              <Field label="Nome completo" error={form.formState.errors.full_name?.message}>
+                <Input {...form.register("full_name")} />
+              </Field>
+              <Field label="Codice fiscale / P.IVA" error={form.formState.errors.tax_code?.message}>
+                <Input {...form.register("tax_code")} />
+              </Field>
+            </div>
+            <Field label="Contatti" error={form.formState.errors.contacts?.message}>
               <Input {...form.register("contacts")} />
             </Field>
-            <Field label="Note">
+            <Field label="Note" error={form.formState.errors.notes?.message}>
               <Input {...form.register("notes")} />
             </Field>
-            <div className="flex justify-end gap-2">
-              <Button>
-                <Plus size={16} /> Salva
-              </Button>
-              {selected ? (
-                <Button type="button" variant="outline" onClick={remove}>
-                  <Trash2 size={16} /> Elimina
-                </Button>
-              ) : null}
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+      </EntityForm>
     );
   }
 
@@ -251,6 +249,10 @@ export function Tenants({
       `${row.tenant.full_name} ${row.tenant.tax_code ?? ""} ${row.tenant.contacts ?? ""}`.toLowerCase();
     return (
       text.includes(search.toLowerCase()) &&
+      (tenantStatusFilter === "all" ||
+        (tenantStatusFilter === "expired"
+          ? row.expiredOnly
+          : !row.expiredOnly)) &&
       (arrearsFilter === "all" ||
         (arrearsFilter === "arrears" ? row.arrears > 0 : row.arrears === 0))
     );
@@ -292,6 +294,16 @@ export function Tenants({
           search={search}
           onSearch={setSearch}
           filters={[
+            {
+              label: "Stato",
+              value: tenantStatusFilter,
+              onChange: setTenantStatusFilter,
+              options: [
+                { value: "active", label: "Attivi" },
+                { value: "all", label: "Tutti" },
+                { value: "expired", label: "Scaduti" },
+              ],
+            },
             {
               label: "Morosità",
               value: arrearsFilter,

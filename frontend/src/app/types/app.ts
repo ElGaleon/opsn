@@ -1,6 +1,5 @@
 import {
   Contract,
-  Deadline,
   Forecast,
   Movement,
   Owner,
@@ -18,10 +17,7 @@ export type Section =
   | "owners"
   | "contracts"
   | "tenants"
-  | "collections"
-  | "movements"
-  | "deadlines"
-  | "reports";
+  | "movements";
 
 export type Data = {
   owners: Owner[];
@@ -31,7 +27,6 @@ export type Data = {
   shares: Share[];
   contracts: Contract[];
   movements: Movement[];
-  deadlines: Deadline[];
   summary: Summary | null;
   ownerReports: OwnerReport[];
   forecast: Forecast | null;
@@ -45,7 +40,6 @@ export const emptyData: Data = {
   shares: [],
   contracts: [],
   movements: [],
-  deadlines: [],
   summary: null,
   ownerReports: [],
   forecast: null,

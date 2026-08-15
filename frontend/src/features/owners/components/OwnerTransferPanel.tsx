@@ -1,16 +1,10 @@
-import { ArrowLeft, Plus } from "lucide-react";
 import { ComponentProps } from "react";
 import { UseFormReturn } from "react-hook-form";
+import { EntityForm } from "@shared/components/EntityForm";
 import { Field } from "@shared/components/Field";
-import { Button } from "@shared/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@shared/components/ui/card";
 import { Input } from "@shared/components/ui/input";
 import { Select } from "@shared/components/ui/select";
+import { notifyInvalidSubmit } from "@shared/lib/toast";
 import { Data } from "@app/types/app";
 import { TransferFormValues } from "../types/ownerTypes";
 
@@ -26,29 +20,27 @@ export function OwnerTransferPanel({
   onSubmit: (values: TransferFormValues) => void;
 }) {
   return (
-    <Card>
-      <CardHeader className="flex-row items-center justify-between space-y-0">
-        <CardTitle>Trasferimento tra proprietari</CardTitle>
-        <Button variant="outline" onClick={onBack}>
-          <ArrowLeft size={16} /> Indietro
-        </Button>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+    <EntityForm
+      title="Trasferimento tra proprietari"
+      isEditing={false}
+      onBack={onBack}
+      onSubmit={form.handleSubmit(onSubmit, notifyInvalidSubmit)}
+      isDirty={form.formState.isDirty}
+    >
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-[1fr_1fr_150px_170px_150px]">
-            <Field label="Da">
+            <Field label="Da" error={form.formState.errors.from_owner_id?.message}>
               <OwnerSelect data={data} {...form.register("from_owner_id")} />
             </Field>
-            <Field label="A">
+            <Field label="A" error={form.formState.errors.to_owner_id?.message}>
               <OwnerSelect data={data} {...form.register("to_owner_id")} />
             </Field>
-            <Field label="Importo">
+            <Field label="Importo" error={form.formState.errors.amount?.message}>
               <Input type="number" step="0.01" {...form.register("amount")} />
             </Field>
-            <Field label="Data">
+            <Field label="Data" error={form.formState.errors.transfer_date?.message}>
               <Input type="date" {...form.register("transfer_date")} />
             </Field>
-            <Field label="Metodo">
+            <Field label="Metodo" error={form.formState.errors.method?.message}>
               <Select {...form.register("method")}>
                 <option value="bonifico">Bonifico</option>
                 <option value="contanti">Contanti</option>
@@ -57,17 +49,10 @@ export function OwnerTransferPanel({
               </Select>
             </Field>
           </div>
-          <Field label="Note">
+          <Field label="Note" error={form.formState.errors.notes?.message}>
             <Input {...form.register("notes")} />
           </Field>
-          <div className="flex justify-end">
-            <Button>
-              <Plus size={16} /> Registra
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+    </EntityForm>
   );
 }
 

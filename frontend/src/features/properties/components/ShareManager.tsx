@@ -6,6 +6,7 @@ import { Field } from "@shared/components/Field";
 import { Button } from "@shared/components/ui/button";
 import { Input } from "@shared/components/ui/input";
 import { api, Share } from "@shared/lib/api";
+import { notifyInvalidSubmit } from "@shared/lib/toast";
 import { shareSetSchema } from "@shared/schemas/forms";
 import { Data } from "@app/types/app";
 import { ShareFormValues } from "../types/propertyTypes";
@@ -16,14 +17,18 @@ export function ShareManager({
   unitId,
   reload,
   getToken,
+  defaultEditing = false,
+  onClose,
 }: {
   data: Data;
   propertyId?: string;
   unitId?: string;
   reload: () => Promise<void>;
   getToken?: () => Promise<string | null>;
+  defaultEditing?: boolean;
+  onClose?: () => void;
 }) {
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useState(defaultEditing);
   const targetShares = data.shares.filter((share) =>
     unitId ? share.unit_id === unitId : share.property_id === propertyId,
   );
@@ -65,6 +70,7 @@ export function ShareManager({
     });
     setEditing(false);
     await reload();
+    onClose?.();
   }
 
   if (!editing) {
@@ -96,12 +102,15 @@ export function ShareManager({
   }
 
   return (
-    <form className="space-y-3" onSubmit={form.handleSubmit(save)}>
+    <form
+      className="space-y-3"
+      onSubmit={form.handleSubmit(save, notifyInvalidSubmit)}
+    >
       <div className="grid gap-3 sm:grid-cols-2">
-        <Field label="Valide dal">
+        <Field label="Valide dal" error={form.formState.errors.valid_from?.message}>
           <Input type="date" {...form.register("valid_from")} />
         </Field>
-        <Field label="Valide al">
+        <Field label="Valide al" error={form.formState.errors.valid_to?.message}>
           <Input type="date" {...form.register("valid_to")} />
         </Field>
       </div>
@@ -139,7 +148,10 @@ export function ShareManager({
         <Button
           type="button"
           variant="outline"
-          onClick={() => setEditing(false)}
+          onClick={() => {
+            setEditing(false);
+            onClose?.();
+          }}
         >
           Annulla
         </Button>

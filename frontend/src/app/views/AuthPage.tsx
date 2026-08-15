@@ -9,9 +9,9 @@ const clerkAppearance = {
   elements: {
     rootBox: "w-full",
     cardBox:
-      "w-full max-w-none overflow-hidden rounded-lg border border-emerald-950/10 shadow-none",
+      "w-full max-w-none overflow-hidden rounded-lg border-0 shadow-none sm:border sm:border-emerald-950/10",
     card: "w-full shadow-none bg-white",
-    headerTitle: "text-xl",
+    headerTitle: "text-lg sm:text-xl",
     headerSubtitle: "text-sm",
     formButtonPrimary: "h-10 bg-emerald-700 hover:bg-emerald-800",
     footerActionLink: "text-emerald-700 hover:text-emerald-800",
@@ -36,9 +36,9 @@ export function AuthPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#f4f7f3] px-3 py-4 text-stone-950 sm:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_460px] lg:gap-10 lg:px-10">
-      <section className="mx-auto flex max-w-3xl flex-col justify-center py-3 sm:py-8 lg:mx-0">
-        <div className="mb-4 flex items-center gap-3 sm:mb-8">
+    <main className="min-h-screen bg-white px-4 py-5 text-stone-950 sm:bg-[#f4f7f3] sm:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_460px] lg:gap-10 lg:px-10">
+      <section className="hidden max-w-3xl flex-col justify-center py-8 lg:flex">
+        <div className="mb-8 flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-md bg-emerald-700 text-white shadow-sm shadow-emerald-950/20">
             <Building2 size={20} />
           </div>
@@ -76,8 +76,17 @@ export function AuthPage() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-md py-2 lg:flex lg:items-center">
-        <div className="w-full space-y-3 rounded-lg border border-emerald-950/10 bg-white/80 p-3 shadow-lg shadow-emerald-950/10 backdrop-blur sm:space-y-4 sm:p-4">
+      <section className="mx-auto flex min-h-[calc(100vh-2.5rem)] w-full max-w-sm flex-col justify-center py-2 sm:max-w-md lg:min-h-0 lg:items-center">
+        <div className="mb-5 flex items-center gap-3 lg:hidden">
+          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-emerald-700 text-white shadow-sm shadow-emerald-950/20">
+            <Building2 size={18} />
+          </div>
+          <div>
+            <h1 className="text-lg font-semibold">OPSN</h1>
+            <p className="text-xs text-stone-500">Gestione affitti familiari</p>
+          </div>
+        </div>
+        <div className="w-full space-y-3 bg-white sm:space-y-4 sm:rounded-lg sm:border sm:border-emerald-950/10 sm:bg-white/80 sm:p-4 sm:shadow-lg sm:shadow-emerald-950/10 sm:backdrop-blur">
           <div className="grid grid-cols-2 rounded-md border border-emerald-950/10 bg-emerald-50/60 p-1">
             <Button
               variant={mode === "login" ? "default" : "ghost"}

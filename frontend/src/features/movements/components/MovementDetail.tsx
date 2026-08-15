@@ -1,7 +1,7 @@
-import { ArrowLeft, Pencil } from "lucide-react";
+import { DetailHeader } from "@shared/components/DetailHeader";
 import { ReadOnly } from "@shared/components/ReadOnly";
 import { Stat } from "@shared/components/Stat";
-import { Button } from "@shared/components/ui/button";
+import { Badge } from "@shared/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -9,9 +9,15 @@ import {
   CardTitle,
 } from "@shared/components/ui/card";
 import { Movement } from "@shared/lib/api";
-import { eur } from "@shared/lib/utils";
+import { eur, formatDate } from "@shared/lib/utils";
 import { Data } from "@app/types/app";
-import { ownerName } from "../utils/movementUtils";
+import {
+  movementTypeLabel,
+  ownerName,
+  paidAmount,
+  paymentStatusClass,
+  paymentStatusLabel,
+} from "../utils/movementUtils";
 
 export function MovementDetail({
   data,
@@ -31,17 +37,12 @@ export function MovementDetail({
   return (
     <div className="space-y-4">
       <Card>
-        <CardHeader className="flex-row items-center justify-between space-y-0">
-          <CardTitle>Dettaglio movimento</CardTitle>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={onBack}>
-              <ArrowLeft size={16} /> Indietro
-            </Button>
-            <Button onClick={onEdit}>
-              <Pencil size={16} /> Modifica
-            </Button>
-          </div>
-        </CardHeader>
+        <DetailHeader
+          title="Dettaglio movimento"
+          subtitle={movement.description}
+          onBack={onBack}
+          onEdit={onEdit}
+        />
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
             <Stat
@@ -52,24 +53,29 @@ export function MovementDetail({
             <Stat label="Allocazioni" value={movement.allocations.length} />
             <Stat
               label="Pagato"
-              value={eur.format(
-                movement.status === "unpaid" ? 0 : Number(movement.amount),
-              )}
+              value={eur.format(paidAmount(movement))}
             />
             <Stat
               label="Scoperto"
-              value={eur.format(
-                movement.status === "unpaid" ? Number(movement.amount) : 0,
-              )}
-              tone={movement.status === "unpaid" ? "bad" : "default"}
+              value={eur.format(Number(movement.amount) - paidAmount(movement))}
+              tone={movement.status === "paid" ? "default" : "bad"}
             />
           </div>
           <div className="grid gap-3 md:grid-cols-2">
+            <ReadOnly label="Tipo" value={movementTypeLabel(movement.type)} />
+            <ReadOnly
+              label="Stato"
+              value={
+                <Badge className={paymentStatusClass(movement.status)}>
+                  {paymentStatusLabel(movement.status)}
+                </Badge>
+              }
+            />
             <ReadOnly label="Descrizione" value={movement.description} />
             <ReadOnly label="Categoria" value={movement.category} />
             <ReadOnly label="Immobile" value={property?.name ?? ""} />
             <ReadOnly label="Unità" value={unit?.name ?? ""} />
-            <ReadOnly label="Competenza" value={movement.accrual_date} />
+            <ReadOnly label="Competenza" value={formatDate(movement.accrual_date)} />
             <ReadOnly
               label="Ripartizione"
               value={

@@ -5,6 +5,7 @@ import { Input } from "@shared/components/ui/input";
 import { Select } from "@shared/components/ui/select";
 import { Textarea } from "@shared/components/ui/textarea";
 import { Property } from "@shared/lib/api";
+import { notifyInvalidSubmit } from "@shared/lib/toast";
 import { UnitFormValues } from "../types/propertyTypes";
 
 export function UnitForm({
@@ -31,9 +32,10 @@ export function UnitForm({
       isEditing={isEditing}
       onBack={onBack}
       onDelete={onDelete}
-      onSubmit={form.handleSubmit(onSubmit)}
+      onSubmit={form.handleSubmit(onSubmit, notifyInvalidSubmit)}
+      isDirty={form.formState.isDirty}
     >
-      <Field label="Immobile">
+      <Field label="Immobile" error={form.formState.errors.property_id?.message}>
         <Select {...form.register("property_id")}>
           <option value="">Seleziona immobile</option>
           {properties.map((item) => (
@@ -47,7 +49,7 @@ export function UnitForm({
         <Field label="Nome unità" error={form.formState.errors.name?.message}>
           <Input {...form.register("name")} autoComplete="off" />
         </Field>
-        <Field label="Tipologia">
+        <Field label="Tipologia" error={form.formState.errors.unit_type?.message}>
           <Select {...form.register("unit_type")}>
             <option value="apartment">Appartamento</option>
             <option value="garage">Garage</option>

@@ -1,6 +1,8 @@
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
+import { Plus } from "lucide-react";
 import { Data } from "@app/types/app";
+import { Button } from "@shared/components/ui/button";
 
 const colors = [
   "#087f5b",
@@ -15,10 +17,12 @@ export function OwnershipDonut({
   data,
   propertyId,
   unitId,
+  onEdit,
 }: {
   data: Data;
   propertyId?: string;
   unitId?: string;
+  onEdit?: () => void;
 }) {
   const shares = data.shares.filter(
     (share) =>
@@ -66,8 +70,11 @@ export function OwnershipDonut({
 
   if (!shares.length) {
     return (
-      <div className="flex h-[260px] items-center justify-center rounded-lg border border-dashed border-stone-200 bg-stone-50 text-sm text-stone-500">
-        Nessuna quota assegnata.
+      <div className="flex min-h-[260px] flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-emerald-950/15 bg-emerald-50/30 p-6 text-center text-sm text-stone-500">
+        <p>Nessuna quota assegnata.</p>
+        <Button type="button" variant="outline" onClick={onEdit}>
+          <Plus size={16} /> Assegna quote
+        </Button>
       </div>
     );
   }

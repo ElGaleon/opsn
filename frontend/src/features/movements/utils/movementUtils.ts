@@ -1,4 +1,5 @@
 import { Data } from "@app/types/app";
+import { Movement } from "@shared/lib/api";
 
 export function ownerName(data: Data, ownerId?: string | null) {
   const owner = data.owners.find((item) => item.id === ownerId);
@@ -37,4 +38,35 @@ export function filterMovements(
       (statusFilter === "all" || movement.status === statusFilter)
     );
   });
+}
+
+export function movementTypeLabel(type?: string | null) {
+  if (type === "income") return "Entrata";
+  if (type === "expense") return "Uscita";
+  if (type === "transfer") return "Trasferimento";
+  return "—";
+}
+
+export function paymentStatusLabel(status?: string | null) {
+  if (status === "paid") return "Pagato";
+  if (status === "partial") return "Parziale";
+  if (status === "unpaid") return "Non pagato";
+  if (status === "open") return "Aperta";
+  if (status === "done") return "Chiusa";
+  return status || "—";
+}
+
+export function paymentStatusClass(status?: string | null) {
+  if (status === "paid" || status === "done")
+    return "border-0 bg-emerald-50 text-emerald-800";
+  if (status === "partial")
+    return "border-0 bg-amber-50 text-amber-800";
+  if (status === "unpaid" || status === "open")
+    return "border-0 bg-red-50 text-red-800";
+  return "border-0 bg-stone-100 text-stone-700";
+}
+
+export function paidAmount(movement: Movement) {
+  if (movement.status === "unpaid") return 0;
+  return Number(movement.paid_amount ?? movement.amount);
 }

@@ -1,7 +1,6 @@
-import { ArrowLeft, Pencil } from "lucide-react";
+import { DetailHeader } from "@shared/components/DetailHeader";
 import { ReadOnly } from "@shared/components/ReadOnly";
 import { Stat } from "@shared/components/Stat";
-import { Button } from "@shared/components/ui/button";
 import {
   Card,
   CardContent,
@@ -38,17 +37,13 @@ export function OwnerDetail({
   return (
     <div className="space-y-4">
       <Card>
-        <CardHeader className="flex-row items-center justify-between space-y-0">
-          <CardTitle>Dettaglio proprietario</CardTitle>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={onBack}>
-              <ArrowLeft size={16} /> Indietro
-            </Button>
-            <Button onClick={onEdit}>
-              <Pencil size={16} /> Modifica
-            </Button>
-          </div>
-        </CardHeader>
+        <DetailHeader
+          eyebrow="Dettaglio proprietario"
+          title={`${owner.first_name} ${owner.last_name}`}
+          subtitle={owner.contacts ?? ""}
+          onBack={onBack}
+          onEdit={onEdit}
+        />
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
             <Stat
