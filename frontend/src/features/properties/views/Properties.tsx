@@ -94,9 +94,13 @@ export function Properties({
 
   async function removeProperty() {
     if (!property) return;
-    const token = getToken ? await getToken() : null;
-    await api(`/properties/${property.id}`, token, { method: "DELETE" });
+    await removePropertyById(property.id);
     setView({ kind: "list" });
+  }
+
+  async function removePropertyById(propertyId: string) {
+    const token = getToken ? await getToken() : null;
+    await api(`/properties/${propertyId}`, token, { method: "DELETE" });
     await reload();
   }
 
@@ -238,6 +242,8 @@ export function Properties({
       onNewUnit={() => setView({ kind: "unit", propertyId: "" })}
       onSelect={(id) => setView({ kind: "property", id, mode: "view" })}
       onSelectUnits={selectPropertyUnits}
+      onEdit={(id) => setView({ kind: "property", id, mode: "edit" })}
+      onDelete={removePropertyById}
     />
   );
 }

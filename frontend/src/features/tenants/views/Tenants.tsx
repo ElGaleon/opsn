@@ -127,9 +127,13 @@ export function Tenants({
 
   async function remove() {
     if (!selected) return;
-    const token = getToken ? await getToken() : null;
-    await api(`/tenants/${selected.id}`, token, { method: "DELETE" });
+    await removeById(selected.id);
     setSelectedId(undefined);
+  }
+
+  async function removeById(id: string) {
+    const token = getToken ? await getToken() : null;
+    await api(`/tenants/${id}`, token, { method: "DELETE" });
     await reload();
   }
 
@@ -261,6 +265,7 @@ export function Tenants({
   return (
     <SectionPanel
       title="Inquilini"
+      surface="plain"
       actions={
         <Button
           onClick={() => {
@@ -295,7 +300,7 @@ export function Tenants({
           onSearch={setSearch}
           filters={[
             {
-              label: "Stato",
+              label: "Stato inquilino",
               value: tenantStatusFilter,
               onChange: setTenantStatusFilter,
               options: [
@@ -305,7 +310,7 @@ export function Tenants({
               ],
             },
             {
-              label: "Morosità",
+              label: "Filtro morosità",
               value: arrearsFilter,
               onChange: setArrearsFilter,
               options: [
@@ -361,7 +366,14 @@ export function Tenants({
               >
                 {eur.format(row.arrears)}
               </Td>
-              <TableActions label={`Azioni per ${row.tenant.full_name}`} />
+              <TableActions
+                label={`Azioni per ${row.tenant.full_name}`}
+                onEdit={() => {
+                  setSelectedId(row.tenant.id);
+                  setEditMode(true);
+                }}
+                onDelete={() => removeById(row.tenant.id)}
+              />
             </tr>
           ))}
         </tbody>

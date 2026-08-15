@@ -135,7 +135,7 @@ export function AppShell({
             </div>
           </div>
         </header>
-        <main className="mx-auto mt-4 w-full max-w-[84rem] px-3 py-4 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:px-6 sm:py-6 lg:pb-6">
+        <main className="mx-auto mt-4 w-full max-w-[84rem] px-3 py-4 pb-[calc(8rem+env(safe-area-inset-bottom))] sm:px-6 sm:py-6 sm:pb-[calc(14rem+env(safe-area-inset-bottom))] lg:pb-6">
           {children}
         </main>
         <Toaster richColors position="top-right" />

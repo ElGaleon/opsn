@@ -105,6 +105,7 @@ export function Reports({
     <div className="space-y-5">
       <SectionPanel
         title="Conto economico per immobile"
+        surface="plain"
         stats={
           <div className="grid grid-cols-3 gap-2 sm:gap-3">
             <Stat
@@ -159,6 +160,7 @@ export function Reports({
       </SectionPanel>
       <SectionPanel
         title="Saldo proprietari"
+        surface="plain"
         stats={
           <div className="grid grid-cols-3 gap-2 sm:gap-3">
             <Stat
@@ -209,6 +211,7 @@ export function Reports({
       </SectionPanel>
       <SectionPanel
         title="Previsione competenza"
+        surface="plain"
         stats={
           <div className="grid grid-cols-3 gap-2 sm:gap-3">
             <Stat
@@ -282,6 +285,7 @@ export function Reports({
       </SectionPanel>
       <SectionPanel
         title="Previsione per proprietario"
+        surface="plain"
         stats={
           <div className="grid grid-cols-3 gap-2 sm:gap-3">
             <Stat label="Proprietari" value={filteredForecastOwners.length} />

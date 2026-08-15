@@ -79,9 +79,13 @@ export function Contracts({
 
   async function remove() {
     if (!selected) return;
-    const token = getToken ? await getToken() : null;
-    await api(`/contracts/${selected.id}`, token, { method: "DELETE" });
+    await removeById(selected.id);
     setSelectedId(undefined);
+  }
+
+  async function removeById(id: string) {
+    const token = getToken ? await getToken() : null;
+    await api(`/contracts/${id}`, token, { method: "DELETE" });
     await reload();
   }
 
@@ -183,6 +187,7 @@ export function Contracts({
   return (
     <SectionPanel
       title="Contratti"
+      surface="plain"
       actions={
         <Button
           onClick={() => {
@@ -222,7 +227,7 @@ export function Contracts({
           onSearch={setSearch}
           filters={[
             {
-              label: "Stato",
+              label: "Stato contratto",
               value: statusFilter,
               onChange: setStatusFilter,
               options: [
@@ -280,7 +285,14 @@ export function Contracts({
                   {formatDate(contract.starts_on)} ·{" "}
                   {contract.ends_on ? formatDate(contract.ends_on) : "aperto"}
                 </Td>
-                <TableActions label={`Azioni per ${contract.tenant_name}`} />
+                <TableActions
+                  label={`Azioni per ${contract.tenant_name}`}
+                  onEdit={() => {
+                    setSelectedId(contract.id);
+                    setEditMode(true);
+                  }}
+                  onDelete={() => removeById(contract.id)}
+                />
               </tr>
             );
           })}

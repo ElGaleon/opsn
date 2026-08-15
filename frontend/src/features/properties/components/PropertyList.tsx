@@ -20,6 +20,8 @@ export function PropertyList({
   onNewUnit,
   onSelect,
   onSelectUnits,
+  onEdit,
+  onDelete,
 }: {
   data: Data;
   properties: Property[];
@@ -31,6 +33,8 @@ export function PropertyList({
   onNewUnit: () => void;
   onSelect: (id: string) => void;
   onSelectUnits: (propertyId: string) => void;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void | Promise<void>;
 }) {
   const totalValue = properties.reduce(
     (sum, property) => sum + Number(property.purchase_value),
@@ -45,6 +49,7 @@ export function PropertyList({
   return (
     <SectionPanel
       title="Immobili"
+      surface="plain"
       actions={
         <>
           <Button variant="outline" onClick={onNewUnit}>
@@ -68,7 +73,7 @@ export function PropertyList({
           onSearch={onSearch}
           filters={[
             {
-              label: "Unità",
+              label: "Filtro unità",
               value: unitFilter,
               onChange: onUnitFilter,
               options: [
@@ -149,7 +154,11 @@ export function PropertyList({
                 <Td className="text-right">
                   {eur.format(Number(property.purchase_value))}
                 </Td>
-                <TableActions label={`Azioni per ${property.name}`} />
+                <TableActions
+                  label={`Azioni per ${property.name}`}
+                  onEdit={() => onEdit(property.id)}
+                  onDelete={() => onDelete(property.id)}
+                />
               </tr>
             );
           })}

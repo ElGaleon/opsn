@@ -127,6 +127,7 @@ export function Collections({
     <div className="space-y-4">
       <SectionPanel
         title="Incasso canoni"
+        surface="plain"
         actions={
           <label className="flex items-center gap-2 text-sm text-stone-600">
             Mese
@@ -156,7 +157,7 @@ export function Collections({
             placeholder="Cerca inquilino, unità o descrizione"
             filters={[
               {
-                label: "Stato",
+                label: "Stato incasso",
                 value: status,
                 onChange: setStatus,
                 options: [

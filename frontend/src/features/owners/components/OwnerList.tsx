@@ -37,6 +37,7 @@ export function OwnerList({
   return (
     <SectionPanel
       title="Proprietari"
+      surface="plain"
       actions={
         <>
           <Button variant="outline" onClick={onBalances}>
@@ -57,7 +58,7 @@ export function OwnerList({
           onSearch={onSearch}
           filters={[
             {
-              label: "Saldo",
+              label: "Filtro saldo",
               value: balanceFilter,
               onChange: onBalanceFilter,
               options: [

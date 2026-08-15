@@ -22,6 +22,7 @@ export function OwnerBalancesPanel({
   return (
     <SectionPanel
       title="Saldi proprietari"
+      surface="plain"
       actions={
         <Button variant="outline" onClick={onBack}>
           <ArrowLeft size={16} /> Indietro

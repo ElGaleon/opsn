@@ -378,6 +378,7 @@ function MonthlyStatsDetail({
       <SectionPanel
         title={`Comparazione mensile ${year}`}
         className="motion-card"
+        surface="plain"
       >
         <Table>
           <thead>
@@ -1079,7 +1080,11 @@ function MonthlyTrendChart({ rows }: { rows: YearRow[] }) {
 
 function MonthlyTable({ rows, year }: { rows: YearRow[]; year: number }) {
   return (
-    <SectionPanel title={`Dettaglio mensile ${year}`} className="motion-card">
+    <SectionPanel
+      title={`Dettaglio mensile ${year}`}
+      className="motion-card"
+      surface="plain"
+    >
       <Table>
         <thead>
           <tr>

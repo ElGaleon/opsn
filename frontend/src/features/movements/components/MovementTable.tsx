@@ -19,6 +19,7 @@ export function MovementTable({
   return (
     <SectionPanel
       title="Registro movimenti"
+      surface="plain"
       stats={
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
           <Stat label="Movimenti" value={movements.length} />

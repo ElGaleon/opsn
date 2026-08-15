@@ -4,6 +4,8 @@ import {
   ChevronRight,
   ChevronUp,
   MoreHorizontal,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 
@@ -153,7 +155,7 @@ export function Table({
   );
 
   return (
-    <div className="overflow-hidden rounded-xl border border-stone-200 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-lg border border-emerald-950/10 bg-white">
       <div className="space-y-2 p-3 md:hidden">
         {visibleRows.length ? (
           visibleRows.map((row, rowIndex) => {
@@ -162,7 +164,7 @@ export function Table({
               <div
                 key={row.key ?? rowIndex}
                 className={cn(
-                  "space-y-3 rounded-lg border border-stone-200 bg-white p-3 shadow-sm",
+                  "space-y-3 rounded-lg border border-emerald-950/10 bg-white p-3",
                   row.props.onClick ? "cursor-pointer active:bg-stone-50" : "",
                 )}
                 onClick={row.props.onClick}
@@ -190,7 +192,7 @@ export function Table({
             );
           })
         ) : (
-          <div className="rounded-lg border border-dashed border-stone-200 p-6 text-center text-sm text-stone-500">
+          <div className="rounded-lg border border-dashed border-emerald-950/15 p-6 text-center text-sm text-stone-500">
             {emptyMessage}
           </div>
         )}
@@ -198,7 +200,7 @@ export function Table({
       <div className="hidden w-full overflow-x-auto md:block">
         <table
           className={cn(
-            "w-full min-w-[760px] text-left text-sm tabular-nums [&_tbody_tr:nth-child(even)]:bg-stone-50/50 [&_tbody_tr:hover]:bg-emerald-50/50",
+            "w-full min-w-[760px] bg-white text-left text-sm tabular-nums [&_tbody_tr:nth-child(even)]:bg-stone-50/50 [&_tbody_tr:hover]:bg-emerald-50/50",
             className,
           )}
           {...props}
@@ -207,20 +209,20 @@ export function Table({
         </table>
       </div>
       {sortedRows.length > pageSize ? (
-        <div className="flex flex-col gap-3 border-t border-stone-200 px-4 py-3 text-sm text-stone-600 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 border-t border-emerald-950/10 px-3 py-3 text-sm text-stone-600 sm:flex-row sm:items-center sm:justify-between">
           <span>
             Pagina {page} di {totalPages}
           </span>
           <div className="grid grid-cols-2 gap-2 sm:flex">
             <button
-              className="rounded-md border border-stone-200 px-3 py-1.5 disabled:opacity-40"
+              className="rounded-md border border-emerald-950/10 px-3 py-1.5 disabled:opacity-40"
               disabled={page === 1}
               onClick={() => setPage((value) => Math.max(1, value - 1))}
             >
               Precedente
             </button>
             <button
-              className="rounded-md border border-stone-200 px-3 py-1.5 disabled:opacity-40"
+              className="rounded-md border border-emerald-950/10 px-3 py-1.5 disabled:opacity-40"
               disabled={page === totalPages}
               onClick={() =>
                 setPage((value) => Math.min(totalPages, value + 1))
@@ -239,7 +241,7 @@ export function Th({ className, ...props }: React.ComponentProps<"th">) {
   return (
     <th
       className={cn(
-        "border-b border-stone-200 bg-stone-50/80 px-3 py-2.5 text-xs font-semibold uppercase text-stone-600",
+        "border-b border-emerald-950/10 bg-stone-50/80 px-3 py-2.5 text-xs font-semibold uppercase text-stone-600",
         className,
       )}
       {...props}
@@ -251,7 +253,7 @@ export function Td({ className, ...props }: React.ComponentProps<"td">) {
   return (
     <td
       className={cn(
-        "border-b border-stone-200 px-3 py-2.5 align-middle text-stone-950",
+        "border-b border-emerald-950/10 px-3 py-2.5 align-middle text-stone-950",
         className,
       )}
       {...props}
@@ -259,10 +261,20 @@ export function Td({ className, ...props }: React.ComponentProps<"td">) {
   );
 }
 
-export function TableActions({ label = "Azioni" }: { label?: string }) {
+export function TableActions({
+  label = "Azioni",
+  onEdit,
+  onDelete,
+}: {
+  label?: string;
+  onEdit?: () => void;
+  onDelete?: () => void | Promise<void>;
+}) {
+  const [open, setOpen] = React.useState(false);
+  const [confirmDelete, setConfirmDelete] = React.useState(false);
   return (
     <Td className="w-28">
-      <div className="flex items-center justify-end gap-2">
+      <div className="relative flex items-center justify-end gap-2">
         <ChevronRight
           className="text-stone-500 opacity-0 transition-opacity group-hover:opacity-100"
           size={20}
@@ -272,11 +284,79 @@ export function TableActions({ label = "Azioni" }: { label?: string }) {
           type="button"
           aria-label={label}
           className="inline-flex h-9 w-9 items-center justify-center rounded-md text-stone-600 transition-colors hover:bg-stone-100 hover:text-stone-950"
-          onClick={(event) => event.stopPropagation()}
+          onClick={(event) => {
+            event.stopPropagation();
+            setOpen((value) => !value);
+          }}
         >
           <MoreHorizontal size={20} />
         </button>
+        {open ? (
+          <div
+            className="absolute right-0 top-10 z-20 w-40 overflow-hidden rounded-lg border border-stone-200 bg-white p-1 text-sm shadow-lg shadow-stone-950/10"
+            onClick={(event) => event.stopPropagation()}
+          >
+            {onEdit ? (
+              <button
+                type="button"
+                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-stone-700 hover:bg-stone-50"
+                onClick={() => {
+                  setOpen(false);
+                  onEdit();
+                }}
+              >
+                <Pencil size={15} /> Modifica
+              </button>
+            ) : null}
+            {onDelete ? (
+              <button
+                type="button"
+                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-red-700 hover:bg-red-50"
+                onClick={() => {
+                  setOpen(false);
+                  setConfirmDelete(true);
+                }}
+              >
+                <Trash2 size={15} /> Elimina
+              </button>
+            ) : null}
+          </div>
+        ) : null}
       </div>
+      {confirmDelete ? (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/35 p-4"
+          onClick={(event) => event.stopPropagation()}
+        >
+          <div className="w-full max-w-sm rounded-lg border border-stone-200 bg-white p-5 shadow-xl shadow-stone-950/15">
+            <h2 className="text-base font-semibold text-stone-950">
+              Eliminare definitivamente?
+            </h2>
+            <p className="mt-2 text-sm text-stone-600">
+              Questa operazione non può essere annullata.
+            </p>
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                type="button"
+                className="inline-flex h-9 items-center justify-center rounded-md border border-emerald-950/10 bg-white px-3 text-sm font-medium text-stone-800 hover:bg-emerald-50"
+                onClick={() => setConfirmDelete(false)}
+              >
+                Annulla
+              </button>
+              <button
+                type="button"
+                className="inline-flex h-9 items-center justify-center rounded-md bg-red-600 px-3 text-sm font-medium text-white shadow-sm shadow-red-900/20 hover:bg-red-700"
+                onClick={async () => {
+                  await onDelete?.();
+                  setConfirmDelete(false);
+                }}
+              >
+                Elimina
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </Td>
   );
 }

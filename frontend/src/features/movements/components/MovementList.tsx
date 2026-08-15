@@ -48,6 +48,7 @@ export function MovementList({
   return (
     <SectionPanel
       title={title}
+      surface="plain"
       actions={
         <Button onClick={onNew}>
           <Plus size={16} /> Movimento
@@ -92,7 +93,7 @@ export function MovementList({
           onSearch={onSearch}
           filters={[
             {
-              label: "Tipo",
+              label: "Tipologia movimento",
               value: typeFilter,
               onChange: onTypeFilter,
               options: [
@@ -103,7 +104,7 @@ export function MovementList({
               ],
             },
             {
-              label: "Stato",
+              label: "Stato pagamento",
               value: statusFilter,
               onChange: onStatusFilter,
               options: [
