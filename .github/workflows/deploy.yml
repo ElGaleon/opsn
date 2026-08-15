@@ -28,6 +28,10 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd ${{ secrets.VPS_PROJECT_PATH }}
+            set -e
+            test -d "${{ secrets.VPS_PROJECT_PATH }}" || { echo "Missing VPS_PROJECT_PATH directory"; exit 1; }
+            cd "${{ secrets.VPS_PROJECT_PATH }}"
+            test -d .git || { echo "VPS_PROJECT_PATH is not a git repository"; exit 1; }
+            git config --global --add safe.directory "${{ secrets.VPS_PROJECT_PATH }}"
             git pull --ff-only origin main
             docker compose up -d --build
