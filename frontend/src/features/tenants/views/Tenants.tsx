@@ -75,13 +75,24 @@ export function Tenants({
             (movement) =>
               movement.type === "income" && movement.status !== "unpaid",
           )
-          .reduce((sum, movement) => sum + Number(movement.amount), 0);
+          .reduce(
+            (sum, movement) =>
+              sum + Number(movement.paid_amount ?? movement.amount),
+            0,
+          );
         const arrears = movements
           .filter(
             (movement) =>
-              movement.type === "income" && movement.status === "unpaid",
+              movement.type === "income" && movement.status !== "paid",
           )
-          .reduce((sum, movement) => sum + Number(movement.amount), 0);
+          .reduce(
+            (sum, movement) =>
+              sum +
+              (movement.status === "partial"
+                ? Number(movement.amount) - Number(movement.paid_amount ?? 0)
+                : Number(movement.amount)),
+            0,
+          );
         const monthlyRent = contracts.reduce(
           (sum, contract) => sum + Number(contract.monthly_rent),
           0,
@@ -156,7 +167,7 @@ export function Tenants({
                 value={eur.format(row?.monthlyRent ?? 0)}
               />
               <Stat label="Dovuto" value={eur.format(row?.due ?? 0)} />
-              <Stat label="Pagato" value={eur.format(row?.paid ?? 0)} />
+              <Stat label="Totale versato" value={eur.format(row?.paid ?? 0)} />
               <Stat
                 label="Morosità"
                 value={eur.format(row?.arrears ?? 0)}

@@ -55,16 +55,7 @@ export function MovementList({
         </Button>
       }
       stats={
-        <div className="grid gap-2 sm:grid-cols-3 sm:gap-3">
-          <MovementTypeCard
-            label="Tutti"
-            value={data.movements.length}
-            active={typeFilter === "all"}
-            onClick={() => {
-              onTypeFilter("all");
-              onStatusFilter("all");
-            }}
-          />
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 sm:gap-3">
           <MovementTypeCard
             label="Entrate"
             value={eur.format(totalByType(data.movements, "income"))}
@@ -196,13 +187,13 @@ function MovementTypeCard({
   return (
     <button
       type="button"
-      className={`group rounded-lg border bg-white/95 p-3 text-left shadow-sm shadow-emerald-950/5 transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md sm:p-4 ${
+      className={`group min-w-0 rounded-lg border bg-white/95 p-3 text-left shadow-sm shadow-emerald-950/5 transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md sm:p-4 ${
         active ? "border-emerald-500 ring-2 ring-emerald-100" : "border-emerald-950/10"
       }`}
       onClick={onClick}
     >
       <span className="flex items-center justify-between gap-3">
-        <span className="text-[11px] font-medium uppercase text-stone-500 sm:text-xs">
+        <span className="truncate text-[11px] font-medium uppercase text-stone-500 sm:text-xs">
           {label}
         </span>
         <ArrowRight

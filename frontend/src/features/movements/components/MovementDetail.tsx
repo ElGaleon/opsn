@@ -34,6 +34,7 @@ export function MovementDetail({
     (item) => item.id === movement.property_id,
   );
   const unit = data.units.find((item) => item.id === movement.unit_id);
+  const contract = data.contracts.find((item) => item.id === movement.contract_id);
   return (
     <div className="space-y-4">
       <Card>
@@ -75,6 +76,14 @@ export function MovementDetail({
             <ReadOnly label="Categoria" value={movement.category} />
             <ReadOnly label="Immobile" value={property?.name ?? ""} />
             <ReadOnly label="Unità" value={unit?.name ?? ""} />
+            <ReadOnly
+              label="Contratto"
+              value={
+                contract
+                  ? `${contract.tenant_name} (${formatDate(contract.starts_on)})`
+                  : ""
+              }
+            />
             <ReadOnly label="Competenza" value={formatDate(movement.accrual_date)} />
             <ReadOnly
               label="Ripartizione"

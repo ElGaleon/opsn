@@ -27,10 +27,13 @@ export function SectionPanel({
   return (
     <div className="flex flex-col gap-3 sm:gap-4">
       <SectionHero title={title} actions={actions} tone={tone}></SectionHero>
-      {stats ? <div>{stats}</div> : null}
-      <SectionFilters filters={filters} tone={tone}></SectionFilters>
+      {stats ? <div className="order-2 sm:order-none">{stats}</div> : null}
+      <div className="order-1 sm:order-none">
+        <SectionFilters filters={filters} tone={tone}></SectionFilters>
+      </div>
       <div
         className={cn(
+          "order-3 sm:order-none",
           surface === "card" && "rounded-lg border p-4 shadow-sm",
           surface === "card" &&
             (tone === "dark"

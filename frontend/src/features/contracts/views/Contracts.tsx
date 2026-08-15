@@ -244,7 +244,6 @@ export function Contracts({
         <thead>
           <tr>
             <Th>Inquilino</Th>
-            <Th>Unità</Th>
             <Th>Canone</Th>
             <Th>Periodo</Th>
             <Th className="text-right">Azioni</Th>
@@ -255,6 +254,12 @@ export function Contracts({
             const unit = data.units.find(
               (item) => item.id === contract.unit_id,
             );
+            const property = data.properties.find(
+              (item) => item.id === unit?.property_id,
+            );
+            const unitName = unit
+              ? [property?.name, unit.name].filter(Boolean).join(" - ")
+              : "Unità non assegnata";
             return (
               <tr
                 key={contract.id}
@@ -274,12 +279,11 @@ export function Contracts({
                         {contract.tenant_name}
                       </p>
                       <p className="truncate text-sm text-stone-500">
-                        {unit?.name ?? "Unità non assegnata"}
+                        {unitName}
                       </p>
                     </div>
                   </div>
                 </Td>
-                <Td>{unit?.name}</Td>
                 <Td>{eur.format(Number(contract.monthly_rent))}</Td>
                 <Td>
                   {formatDate(contract.starts_on)} ·{" "}

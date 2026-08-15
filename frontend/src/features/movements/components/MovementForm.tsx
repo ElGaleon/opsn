@@ -4,10 +4,10 @@ import { EntityForm } from "@shared/components/EntityForm";
 import { Field } from "@shared/components/Field";
 import { Input } from "@shared/components/ui/input";
 import { Select } from "@shared/components/ui/select";
-import { eur } from "@shared/lib/utils";
+import { eur, formatDate } from "@shared/lib/utils";
 import { Data } from "@app/types/app";
 import { MovementFormValues } from "../types/movementTypes";
-import { activeShares } from "../utils/movementUtils";
+import { activeShares, ownerDisplayName } from "../utils/movementUtils";
 
 export function MovementForm({
   data,
@@ -37,6 +37,13 @@ export function MovementForm({
   const movementType = form.watch("type");
   const movementStatus = form.watch("status");
   const units = data.units.filter((unit) => unit.property_id === propertyId);
+  const contracts = data.contracts.filter((contract) => {
+    if (unitId) return contract.unit_id === unitId;
+    if (!propertyId) return true;
+    return units.some((unit) => unit.id === contract.unit_id);
+  });
+  const propertyField = form.register("property_id");
+  const unitField = form.register("unit_id");
   const ownershipPreview = activeShares(data, propertyId, unitId).map(
     (share) => ({
       owner: data.owners.find((owner) => owner.id === share.owner_id),
@@ -59,7 +66,14 @@ export function MovementForm({
     >
           {movementType !== "transfer" ? (
             <Field label="Immobile" error={form.formState.errors.property_id?.message}>
-              <Select {...form.register("property_id")}>
+              <Select
+                {...propertyField}
+                onChange={(event) => {
+                  propertyField.onChange(event);
+                  form.setValue("unit_id", "", { shouldDirty: true });
+                  form.setValue("contract_id", "", { shouldDirty: true });
+                }}
+              >
                 {data.properties.map((property) => (
                   <option key={property.id} value={property.id}>
                     {property.name}
@@ -70,11 +84,49 @@ export function MovementForm({
           ) : null}
           {movementType !== "transfer" ? (
             <Field label="Unità" error={form.formState.errors.unit_id?.message}>
-              <Select {...form.register("unit_id")}>
+              <Select
+                {...unitField}
+                onChange={(event) => {
+                  unitField.onChange(event);
+                  form.setValue("contract_id", "", { shouldDirty: true });
+                }}
+              >
                 <option value="">Immobile intero</option>
                 {units.map((unit) => (
                   <option key={unit.id} value={unit.id}>
-                    {unit.name}
+                    {unitLabel(data, unit.id)}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+          ) : null}
+          {movementType !== "transfer" ? (
+            <Field label="Contratto" error={form.formState.errors.contract_id?.message}>
+              <Select
+                {...form.register("contract_id")}
+                onChange={(event) => {
+                  const contract = data.contracts.find(
+                    (item) => item.id === event.target.value,
+                  );
+                  form.setValue("contract_id", event.target.value, {
+                    shouldDirty: true,
+                  });
+                  if (!contract) return;
+                  const unit = data.units.find(
+                    (item) => item.id === contract.unit_id,
+                  );
+                  form.setValue("unit_id", contract.unit_id, {
+                    shouldDirty: true,
+                  });
+                  form.setValue("property_id", unit?.property_id ?? "", {
+                    shouldDirty: true,
+                  });
+                }}
+              >
+                <option value="">Nessun contratto</option>
+                {contracts.map((contract) => (
+                  <option key={contract.id} value={contract.id}>
+                    {contractLabel(data, contract)}
                   </option>
                 ))}
               </Select>
@@ -237,11 +289,21 @@ function OwnerSelect({
       <option value="">Seleziona</option>
       {data.owners.map((owner) => (
         <option key={owner.id} value={owner.id}>
-          {owner.first_name} {owner.last_name}
+          {ownerDisplayName(owner.first_name, owner.last_name)}
         </option>
       ))}
     </Select>
   );
+}
+
+function unitLabel(data: Data, unitId?: string | null) {
+  const unit = data.units.find((item) => item.id === unitId);
+  const property = data.properties.find((item) => item.id === unit?.property_id);
+  return [property?.name, unit?.name].filter(Boolean).join(" - ");
+}
+
+function contractLabel(data: Data, contract: Data["contracts"][number]) {
+  return `${unitLabel(data, contract.unit_id)} - ${contract.tenant_name} (${formatDate(contract.starts_on)})`;
 }
 
 function PaymentMethod({ form }: { form: UseFormReturn<MovementFormValues> }) {

@@ -164,30 +164,40 @@ export function Table({
               <div
                 key={row.key ?? rowIndex}
                 className={cn(
-                  "space-y-3 rounded-lg border border-emerald-950/10 bg-white p-3",
+                  "space-y-3 rounded-lg border border-emerald-950/10 bg-white p-3 shadow-sm shadow-emerald-950/5",
                   row.props.onClick ? "cursor-pointer active:bg-stone-50" : "",
                 )}
                 onClick={row.props.onClick}
               >
-                {cells.map((cell, index) => {
-                  const label =
-                    textOf(headCells[index]?.props.children) ||
-                    `Campo ${index + 1}`;
-                  if (label.toLowerCase() === "azioni") return null;
-                  return (
-                    <div
-                      key={cell.key ?? index}
-                      className="grid grid-cols-[7rem_minmax(0,1fr)] items-start gap-3 text-sm"
-                    >
-                      <span className="text-xs font-semibold uppercase text-stone-500">
-                        {label}
-                      </span>
-                      <div className="min-w-0 text-stone-950">
-                        {cell.props.children}
-                      </div>
+                <div className="space-y-1">
+                  <div className="min-w-0 text-sm font-semibold text-stone-950">
+                    {cells[0]?.props.children}
+                  </div>
+                  {cells[1] ? (
+                    <div className="min-w-0 text-sm text-stone-600">
+                      {cells[1].props.children}
                     </div>
-                  );
-                })}
+                  ) : null}
+                </div>
+                <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
+                  {cells.slice(2).map((cell, offset) => {
+                    const index = offset + 2;
+                    const label =
+                      textOf(headCells[index]?.props.children) ||
+                      `Campo ${index + 1}`;
+                    if (label.toLowerCase() === "azioni") return null;
+                    return (
+                      <div key={cell.key ?? index} className="min-w-0">
+                        <span className="block truncate text-[11px] font-medium uppercase text-stone-500">
+                          {label}
+                        </span>
+                        <div className="mt-0.5 min-w-0 truncate text-stone-950">
+                          {cell.props.children}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             );
           })

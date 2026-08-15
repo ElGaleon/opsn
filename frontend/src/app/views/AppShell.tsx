@@ -135,7 +135,7 @@ export function AppShell({
             </div>
           </div>
         </header>
-        <main className="mx-auto mt-4 w-full max-w-[84rem] px-3 py-4 pb-[calc(8rem+env(safe-area-inset-bottom))] sm:px-6 sm:py-6 sm:pb-[calc(14rem+env(safe-area-inset-bottom))] lg:pb-6">
+        <main className="mx-auto mt-2 w-full max-w-[84rem] px-3 py-4 pb-[calc(9rem+env(safe-area-inset-bottom))] sm:mt-3 sm:px-6 sm:py-6 sm:pb-[calc(14rem+env(safe-area-inset-bottom))] lg:pb-6">
           {children}
         </main>
         <Toaster richColors position="top-right" />
@@ -158,7 +158,7 @@ function BottomNav({
     ),
   );
   return (
-    <nav className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] z-40 grid grid-cols-5 rounded-2xl border border-sidebar-border bg-white/95 p-1 shadow-lg shadow-emerald-950/10 backdrop-blur lg:hidden">
+    <nav className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+1.5rem)] z-40 grid grid-cols-5 rounded-2xl border border-sidebar-border bg-white/95 p-1 shadow-lg shadow-emerald-950/10 backdrop-blur lg:hidden">
       {items.map(([key, Icon, label]) => (
         <button
           key={key}

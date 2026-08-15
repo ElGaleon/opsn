@@ -38,6 +38,7 @@ export const unitSchema = z.object({
 export const movementSchema = z.object({
   property_id: z.string().optional(),
   unit_id: z.string().optional(),
+  contract_id: z.string().optional(),
   type: z.enum(["income", "expense", "transfer"]),
   category: requiredText("Categoria", 2),
   description: requiredText("Descrizione", 3),

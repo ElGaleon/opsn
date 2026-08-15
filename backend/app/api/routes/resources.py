@@ -179,6 +179,23 @@ def units(property_id: str | None = None, db: Session = Depends(get_db)):
 def create_unit(payload: UnitIn, db: Session = Depends(get_db)):
     row = models.Unit(**payload.model_dump())
     db.add(row)
+    db.flush()
+    property_shares = db.scalars(
+        select(models.OwnershipShare).where(
+            models.OwnershipShare.property_id == payload.property_id,
+            models.OwnershipShare.valid_to.is_(None),
+        )
+    ).all()
+    db.add_all(
+        models.OwnershipShare(
+            owner_id=share.owner_id,
+            unit_id=row.id,
+            percentage=share.percentage,
+            valid_from=share.valid_from,
+            valid_to=share.valid_to,
+        )
+        for share in property_shares
+    )
     db.commit()
     db.refresh(row)
     return row

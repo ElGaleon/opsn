@@ -37,14 +37,24 @@ def validate_share_total(db: Session, new_share: OwnershipShareIn, existing_id: 
 
 
 def active_shares(db: Session, movement: MovementIn) -> list[models.OwnershipShare]:
-    filters = [
+    base_filters = [
         models.OwnershipShare.valid_from <= movement.accrual_date,
         or_(models.OwnershipShare.valid_to.is_(None), models.OwnershipShare.valid_to >= movement.accrual_date),
     ]
     if movement.unit_id:
-        filters.append(models.OwnershipShare.unit_id == movement.unit_id)
+        shares = db.scalars(
+            select(models.OwnershipShare).where(
+                and_(*base_filters, models.OwnershipShare.unit_id == movement.unit_id)
+            )
+        ).all()
+        if shares:
+            if sum((share.percentage for share in shares), Decimal("0")) != Decimal("100.00"):
+                raise HTTPException(status_code=422, detail="Quote attive mancanti o non pari al 100%")
+            return shares
+        property_id = db.scalar(select(models.Unit.property_id).where(models.Unit.id == movement.unit_id))
+        filters = [*base_filters, models.OwnershipShare.property_id == property_id]
     elif movement.property_id:
-        filters.append(models.OwnershipShare.property_id == movement.property_id)
+        filters = [*base_filters, models.OwnershipShare.property_id == movement.property_id]
     else:
         raise HTTPException(status_code=422, detail="Serve un immobile o una unità per ripartire secondo quote")
     shares = db.scalars(select(models.OwnershipShare).where(and_(*filters))).all()

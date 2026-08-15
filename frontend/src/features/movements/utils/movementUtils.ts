@@ -1,9 +1,19 @@
 import { Data } from "@app/types/app";
 import { Movement } from "@shared/lib/api";
 
+export function ownerDisplayName(firstName?: string | null, lastName?: string | null) {
+  return [firstName, lastName]
+    .filter(Boolean)
+    .join(" ")
+    .replace(/\s*,\s*,\s*/g, " ")
+    .replace(/,/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export function ownerName(data: Data, ownerId?: string | null) {
   const owner = data.owners.find((item) => item.id === ownerId);
-  return owner ? `${owner.first_name} ${owner.last_name}` : "";
+  return owner ? ownerDisplayName(owner.first_name, owner.last_name) : "";
 }
 
 export function activeShares(data: Data, propertyId?: string, unitId?: string) {

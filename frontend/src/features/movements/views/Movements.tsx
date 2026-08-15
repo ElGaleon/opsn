@@ -13,6 +13,7 @@ import { filterMovements } from "../utils/movementUtils";
 
 const emptyMovement = (propertyId = ""): MovementFormValues => ({
   property_id: propertyId,
+  contract_id: "",
   type: "income",
   category: "Affitto",
   description: "",
@@ -67,6 +68,7 @@ export function Movements({
     form.reset({
       property_id: selected.property_id ?? "",
       unit_id: selected.unit_id ?? "",
+      contract_id: selected.contract_id ?? "",
       type: selected.type,
       category: selected.category,
       description: selected.description,
@@ -100,6 +102,8 @@ export function Movements({
       property_id:
         values.type === "transfer" ? null : values.property_id || null,
       unit_id: values.type === "transfer" ? null : values.unit_id || null,
+      contract_id:
+        values.type === "transfer" ? null : values.contract_id || null,
       due_date: values.due_date || null,
       payment_date:
         values.payment_date ||
