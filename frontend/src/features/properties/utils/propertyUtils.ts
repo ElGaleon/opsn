@@ -1,6 +1,10 @@
 import { Property, Unit } from "@shared/lib/api";
 import { Data } from "@app/types/app";
 import {
+  openAmount,
+  paidAmount,
+} from "@features/movements/utils/movementUtils";
+import {
   MoneyStats,
   PropertyFormValues,
   UnitFormValues,
@@ -75,14 +79,14 @@ export function statsFor(movements: Data["movements"]): MoneyStats {
     .filter((item) => item.type === "expense")
     .reduce((sum, item) => sum + Number(item.amount), 0);
   const cashIn = movements
-    .filter((item) => item.type === "income" && item.status !== "unpaid")
-    .reduce((sum, item) => sum + Number(item.amount), 0);
+    .filter((item) => item.type === "income")
+    .reduce((sum, item) => sum + paidAmount(item), 0);
   const cashOut = movements
-    .filter((item) => item.type === "expense" && item.status !== "unpaid")
-    .reduce((sum, item) => sum + Number(item.amount), 0);
+    .filter((item) => item.type === "expense")
+    .reduce((sum, item) => sum + paidAmount(item), 0);
   const arrears = movements
-    .filter((item) => item.type === "income" && item.status === "unpaid")
-    .reduce((sum, item) => sum + Number(item.amount), 0);
+    .filter((item) => item.type === "income")
+    .reduce((sum, item) => sum + openAmount(item), 0);
   return {
     income,
     expenses,

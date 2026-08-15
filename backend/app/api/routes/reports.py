@@ -55,9 +55,9 @@ def report_summary(db: Session = Depends(get_db)):
     ).all()
     income_accrual = sum(amount for kind, _status, amount in rows if enum_value(kind) == "income")
     expense_accrual = sum(amount for kind, _status, amount in rows if enum_value(kind) == "expense")
-    income_cash = sum(amount for kind, status, amount in rows if enum_value(kind) == "income" and enum_value(status) in ("paid", "partial"))
-    expense_cash = sum(amount for kind, status, amount in rows if enum_value(kind) == "expense" and enum_value(status) in ("paid", "partial"))
-    arrears = sum(amount for kind, status, amount in rows if enum_value(kind) == "income" and enum_value(status) == "unpaid")
+    income_cash = sum(amount for kind, status, amount in rows if enum_value(kind) == "income" and enum_value(status) == "paid")
+    expense_cash = sum(amount for kind, status, amount in rows if enum_value(kind) == "expense" and enum_value(status) == "paid")
+    arrears = sum(amount for kind, status, amount in rows if enum_value(kind) == "income" and enum_value(status) != "paid")
     return {
         "income_accrual": Decimal(income_accrual),
         "expense_accrual": Decimal(expense_accrual),

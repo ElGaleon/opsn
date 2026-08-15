@@ -34,4 +34,6 @@ jobs:
             test -d .git || { echo "VPS_PROJECT_PATH is not a git repository"; exit 1; }
             git config --global --add safe.directory "${{ secrets.VPS_PROJECT_PATH }}"
             git pull --ff-only origin main
+            git log -1 --oneline
             docker compose up -d --build
+            docker compose ps

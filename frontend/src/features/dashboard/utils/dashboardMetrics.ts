@@ -5,6 +5,7 @@ import {
   Property,
   Unit,
 } from "@shared/lib/api";
+import { paidAmount } from "@features/movements/utils/movementUtils";
 
 export type YearRow = {
   month: string;
@@ -35,11 +36,7 @@ export function buildYearRows(
           movement.type === "transfer"
         )
           return total;
-        const amount = Number(
-          movement.status === "partial"
-            ? (movement.paid_amount ?? 0)
-            : movement.amount,
-        );
+        const amount = paidAmount(movement);
         if (movement.type === "income") total.income += amount;
         if (movement.type === "expense") total.expenses += amount;
         return total;
@@ -152,6 +149,9 @@ export function buildExtraMetrics(
       contract.ends_on >= todayIso &&
       contract.ends_on <= in180Days.toISOString().slice(0, 10),
   ).length;
+  const unitPropertyIds = new Map(
+    units.map((unit) => [unit.id, unit.property_id]),
+  );
   const propertyNet = properties
     .map((property) => ({
       name: property.name,
@@ -159,7 +159,9 @@ export function buildExtraMetrics(
         .filter(
           (movement) =>
             movement.accrual_date.startsWith(String(year)) &&
-            movement.property_id === property.id &&
+            (movement.property_id ??
+              unitPropertyIds.get(movement.unit_id ?? "")) ===
+              property.id &&
             movement.type !== "transfer",
         )
         .reduce(

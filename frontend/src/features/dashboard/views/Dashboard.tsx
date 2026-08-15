@@ -24,6 +24,7 @@ import { SectionPanel } from "@shared/components/SectionPanel";
 import { Button } from "@shared/components/ui/button";
 import { Select } from "@shared/components/ui/select";
 import { Table, Td, Th } from "@shared/components/ui/table";
+import { openAmount } from "@features/movements/utils/movementUtils";
 import {
   buildExtraMetrics,
   buildOccupancyRows,
@@ -599,7 +600,7 @@ function ArrearsStatsDetail({
   onBack: () => void;
 }) {
   const unpaid = movements.filter(
-    (movement) => movement.type === "income" && movement.status === "unpaid",
+    (movement) => movement.type === "income" && openAmount(movement) > 0,
   );
   const years = [
     ...new Set([
@@ -621,7 +622,7 @@ function ArrearsStatsDetail({
           (movement) =>
             (movement.due_date ?? movement.accrual_date).slice(0, 7) === month,
         )
-        .reduce((sum, movement) => sum + Number(movement.amount), 0),
+        .reduce((sum, movement) => sum + openAmount(movement), 0),
     };
   });
   const total = rows.reduce((sum, row) => sum + row.amount, 0);
@@ -696,7 +697,7 @@ function ArrearsStatsDetail({
                   <Td>{movement.description}</Td>
                   <Td>{movement.category}</Td>
                   <Td className="text-right text-amber-700">
-                    {eur.format(Number(movement.amount))}
+                    {eur.format(openAmount(movement))}
                   </Td>
                 </tr>
               ))}

@@ -1,86 +1,70 @@
-# OPSN
+# 🏠 OPSN
 
-OPSN e un gestionale fullstack per amministrare immobili familiari in affitto, con attenzione a competenza, cassa, quote proprietarie, morosita e saldi tra proprietari.
+**OPSN** is a full-stack property management app for family-owned rental real estate. It brings accruals, cash flow, ownership shares, arrears, and owner balances into one operational dashboard.
 
-![Dashboard OPSN](docs/assets/screenshots/dashboard.png)
+![OPSN Dashboard](docs/assets/screenshots/dashboard.png)
 
-## Funzionalita principali
+## ✨ Highlights
 
-- Dashboard con KPI, andamento mensile, competenza, cassa e morosita.
-- Anagrafica immobili con unita, valori, mutui, spese condominiali e quote.
-- Gestione proprietari con saldi, crediti, debiti e trasferimenti interni.
-- Contratti di locazione con canone, deposito, scadenze e stato.
-- Inquilini con storico contratti, canoni, versato e morosita.
-- Registro movimenti per entrate, uscite e trasferimenti.
-- Autenticazione Clerk opzionale.
-- Deploy Docker-friendly su VPS.
+- 📊 **Financial dashboard** with KPIs, monthly trends, accruals, cash flow, and arrears.
+- 🏘️ **Properties and units** with values, mortgages, condominium costs, and ownership shares.
+- 👥 **Owners** with balances, credits, debts, and internal transfers.
+- 📄 **Lease contracts** with rent, deposits, due dates, and status tracking.
+- 🔑 **Tenants** with contract history, rent totals, paid amounts, and arrears.
+- 💸 **Movements** for income, expenses, and owner transfers.
+- 🔐 **Optional Clerk auth** for authenticated access.
+- 🐳 **Docker-ready** for local development and VPS deployment.
 
-## Screenshot
+## 🖼️ Screenshots
 
-| Sezione | Anteprima |
+| Dashboard | Properties |
 | --- | --- |
-| Dashboard | ![Dashboard](docs/assets/screenshots/dashboard.png) |
-| Immobili | ![Immobili](docs/assets/screenshots/properties.png) |
-| Proprietari | ![Proprietari](docs/assets/screenshots/owners.png) |
-| Contratti | ![Contratti](docs/assets/screenshots/contracts.png) |
-| Inquilini | ![Inquilini](docs/assets/screenshots/tenants.png) |
-| Movimenti | ![Movimenti](docs/assets/screenshots/movements.png) |
+| ![Dashboard](docs/assets/screenshots/dashboard.png) | ![Properties](docs/assets/screenshots/properties.png) |
 
-## Stack
+| Owners | Contracts |
+| --- | --- |
+| ![Owners](docs/assets/screenshots/owners.png) | ![Contracts](docs/assets/screenshots/contracts.png) |
 
-- Frontend: React, Vite, TypeScript, shadcn-style components, Tailwind, Zod, React Hook Form.
-- Backend: FastAPI, SQLAlchemy, Pydantic.
-- Database: SQLite.
-- Runtime: Docker Compose.
-- Auth: Clerk, se configurato.
+| Tenants | Movements |
+| --- | --- |
+| ![Tenants](docs/assets/screenshots/tenants.png) | ![Movements](docs/assets/screenshots/movements.png) |
 
-## Struttura
+## 🧱 Stack
 
-```text
-backend/
-  app/
-    api/routes/       Router FastAPI
-    core/             Configurazione e autenticazione
-    database/         Sessione e schema database
-    domain/           Modelli e schemi
-    services/         Logica contabile
-frontend/
-  src/
-    app/              Shell, routing di sezione, loading dati
-    features/         Sezioni funzionali
-    shared/           Componenti, API client, utils, validazioni
-docs/
-  frontend/           Documentazione delle sezioni frontend
-  assets/screenshots/ Screenshot principali
-```
+- ⚛️ **Frontend:** React, Vite, TypeScript, Tailwind, shadcn-style components.
+- 🐍 **Backend:** FastAPI, SQLAlchemy, Pydantic.
+- 🗄️ **Database:** SQLite.
+- ✅ **Forms:** Zod + React Hook Form.
+- 🔐 **Auth:** Clerk, when configured.
+- 🐳 **Runtime:** Docker Compose.
 
-## Avvio locale
+## 🚀 Local Development
 
 ```bash
 docker compose up --build
 ```
 
-URL:
+Available services:
 
-- Frontend: http://localhost:5173
-- Backend: http://localhost:8000
-- Health check: http://localhost:8000/health
+- 🌐 Frontend: http://localhost:5173
+- 🔌 Backend: http://localhost:8000
+- ❤️ Health check: http://localhost:8000/health
 
-Il database locale viene salvato in:
+The local database is stored at:
 
 ```text
 backend/data/opsn-2026.sqlite
 ```
 
-## Configurazione
+## ⚙️ Configuration
 
-Copia l'esempio:
+Copy the example environment file:
 
 ```bash
 cp .env.example .env
 ```
 
-Variabili principali:
+Main variables:
 
 ```text
 DATABASE_URL=sqlite:///./data/opsn.sqlite
@@ -91,13 +75,48 @@ CLERK_JWKS_URL=
 CLERK_ISSUER=
 ```
 
-Se `VITE_CLERK_PUBLISHABLE_KEY` non e configurata, il frontend parte senza login Clerk. Se Clerk e configurato, il frontend richiede autenticazione e invia il token al backend.
+If `VITE_CLERK_PUBLISHABLE_KEY` is not configured, the frontend runs without Clerk login. When Clerk is configured, the frontend requires authentication and sends the session token to the backend.
 
-## Documentazione frontend
+## 🗂️ Project Structure
 
-- [Dashboard](docs/frontend/dashboard.md)
-- [Immobili](docs/frontend/immobili.md)
-- [Proprietari](docs/frontend/proprietari.md)
-- [Contratti](docs/frontend/contratti.md)
-- [Inquilini](docs/frontend/inquilini.md)
-- [Movimenti](docs/frontend/movimenti.md)
+```text
+backend/
+  app/
+    api/routes/       FastAPI routers
+    core/             Configuration and authentication
+    database/         Session and database schema
+    domain/           Models and schemas
+    services/         Accounting logic
+frontend/
+  src/
+    app/              Shell, section routing, data loading
+    features/         Product features
+    shared/           Components, API client, utilities, validation
+docs/
+  frontend/           Frontend section documentation
+  assets/screenshots/ Main screenshots
+```
+
+## 📚 Frontend Docs
+
+- [📊 Dashboard](docs/frontend/dashboard.md)
+- [🏘️ Properties](docs/frontend/immobili.md)
+- [👥 Owners](docs/frontend/proprietari.md)
+- [📄 Contracts](docs/frontend/contratti.md)
+- [🔑 Tenants](docs/frontend/inquilini.md)
+- [💸 Movements](docs/frontend/movimenti.md)
+
+## ✅ Release Checks
+
+Frontend:
+
+```bash
+cd frontend
+npm run build
+```
+
+Backend:
+
+```bash
+python3 -m compileall backend/app
+```

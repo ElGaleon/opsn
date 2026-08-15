@@ -18,6 +18,8 @@ import { appTheme } from "@shared/lib/theme";
 import { cn, eur, formatDate } from "@shared/lib/utils";
 import { Data } from "@app/types/app";
 import {
+  openAmount,
+  paidAmount,
   paymentStatusClass,
   paymentStatusLabel,
 } from "@features/movements/utils/movementUtils";
@@ -49,14 +51,11 @@ export function ContractDetail({
       ),
     );
   const paid = payments
-    .filter((movement) => movement.status !== "unpaid")
-    .reduce(
-      (sum, movement) => sum + Number(movement.paid_amount ?? movement.amount),
-      0,
-    );
-  const arrears = payments
-    .filter((movement) => movement.status === "unpaid")
-    .reduce((sum, movement) => sum + Number(movement.amount), 0);
+    .reduce((sum, movement) => sum + paidAmount(movement), 0);
+  const arrears = payments.reduce(
+    (sum, movement) => sum + openAmount(movement),
+    0,
+  );
   const active =
     !contract.ends_on ||
     contract.ends_on >= new Date().toISOString().slice(0, 10);

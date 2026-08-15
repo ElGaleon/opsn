@@ -23,6 +23,10 @@ import { notifyInvalidSubmit } from "@shared/lib/toast";
 import { eur, formatDate } from "@shared/lib/utils";
 import { tenantSchema } from "@shared/schemas/forms";
 import { Data } from "@app/types/app";
+import {
+  openAmount,
+  paidAmount,
+} from "@features/movements/utils/movementUtils";
 import { TenantFormValues } from "../types/tenantTypes";
 import { isContractActive, isExpiredOnlyTenant } from "../utils/tenantUtils";
 
@@ -71,28 +75,11 @@ export function Tenants({
           .filter((movement) => movement.type === "income")
           .reduce((sum, movement) => sum + Number(movement.amount), 0);
         const paid = movements
-          .filter(
-            (movement) =>
-              movement.type === "income" && movement.status !== "unpaid",
-          )
-          .reduce(
-            (sum, movement) =>
-              sum + Number(movement.paid_amount ?? movement.amount),
-            0,
-          );
+          .filter((movement) => movement.type === "income")
+          .reduce((sum, movement) => sum + paidAmount(movement), 0);
         const arrears = movements
-          .filter(
-            (movement) =>
-              movement.type === "income" && movement.status !== "paid",
-          )
-          .reduce(
-            (sum, movement) =>
-              sum +
-              (movement.status === "partial"
-                ? Number(movement.amount) - Number(movement.paid_amount ?? 0)
-                : Number(movement.amount)),
-            0,
-          );
+          .filter((movement) => movement.type === "income")
+          .reduce((sum, movement) => sum + openAmount(movement), 0);
         const monthlyRent = contracts.reduce(
           (sum, contract) => sum + Number(contract.monthly_rent),
           0,

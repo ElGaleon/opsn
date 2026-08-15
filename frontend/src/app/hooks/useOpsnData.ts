@@ -18,6 +18,7 @@ export function useOpsnData(getToken?: () => Promise<string | null>) {
   const [data, setData] = useState<Data>(emptyData);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const forecastStartMonth = `${new Date().getFullYear()}-01`;
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -44,7 +45,10 @@ export function useOpsnData(getToken?: () => Promise<string | null>) {
         api<Movement[]>("/movements", token),
         api<Summary>("/reports/summary", token),
         api<OwnerReport[]>("/reports/owners", token),
-        api<Forecast>("/reports/forecast", token),
+        api<Forecast>(
+          `/reports/forecast?months=12&start_month=${forecastStartMonth}`,
+          token,
+        ),
       ]);
       setData({
         owners,
@@ -64,7 +68,7 @@ export function useOpsnData(getToken?: () => Promise<string | null>) {
     } finally {
       setLoading(false);
     }
-  }, [getToken]);
+  }, [forecastStartMonth, getToken]);
 
   useEffect(() => {
     void load();

@@ -80,3 +80,11 @@ export function paidAmount(movement: Movement) {
   if (movement.status === "unpaid") return 0;
   return Number(movement.paid_amount ?? movement.amount);
 }
+
+export function openAmount(movement: Movement) {
+  if (movement.status === "paid") return 0;
+  if (movement.status === "partial") {
+    return Math.max(0, Number(movement.amount) - paidAmount(movement));
+  }
+  return Number(movement.amount);
+}
