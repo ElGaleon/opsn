@@ -46,6 +46,17 @@ def add_owner_amount(owners: dict[str, dict], owner_id: str, owner_name: str, ke
     row[key] += amount
 
 
+def is_contract_rent_duplicate(movement: models.Movement, contracts: list[models.LeaseContract]) -> bool:
+    rent_categories = {"affitto", "canone", "locazione"}
+    if enum_value(movement.type) != "income" or movement.category.strip().lower() not in rent_categories:
+        return False
+    return any(
+        movement.unit_id == contract.unit_id
+        or (movement.property_id and movement.property_id == contract.unit.property_id)
+        for contract in contracts
+    )
+
+
 @router.get("/summary")
 def report_summary(db: Session = Depends(get_db)):
     rows = db.execute(
@@ -157,6 +168,8 @@ def report_forecast(months: int = 12, start_month: str | None = None, db: Sessio
         ).all()
         for movement in movements:
             if enum_value(movement.type) == "transfer":
+                continue
+            if is_contract_rent_duplicate(movement, contracts):
                 continue
             if enum_value(movement.type) == "income":
                 income_due += movement.amount

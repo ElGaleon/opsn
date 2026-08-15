@@ -10,6 +10,7 @@ import { Table, Td, Th } from "@shared/components/ui/table";
 import { api, Movement } from "@shared/lib/api";
 import { eur, formatDate } from "@shared/lib/utils";
 import { Data } from "@app/types/app";
+import { openAmount } from "@features/movements/utils/movementUtils";
 
 const today = () => new Date().toISOString().slice(0, 10);
 const currentMonth = () => new Date().toISOString().slice(0, 7);
@@ -70,8 +71,7 @@ export function Collections({
   const totals = rows.reduce(
     (sum, movement) => ({
       due: sum.due + Number(movement.amount),
-      open:
-        sum.open + (movement.status === "paid" ? 0 : Number(movement.amount)),
+      open: sum.open + openAmount(movement),
     }),
     { due: 0, open: 0 },
   );
