@@ -23,8 +23,9 @@ app.include_router(reports.router)
 def startup() -> None:
     Base.metadata.create_all(bind=engine)
     ensure_schema()
-    with SessionLocal() as db:
-        seed(db)
+    if settings.seed_demo_data:
+        with SessionLocal() as db:
+            seed(db)
 
 
 @app.get("/health")
