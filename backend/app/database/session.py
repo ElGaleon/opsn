@@ -54,6 +54,8 @@ def ensure_schema() -> None:
     if "lease_contracts" in inspector.get_table_names():
         columns = {column["name"] for column in inspector.get_columns("lease_contracts")}
         with engine.begin() as conn:
+            if "tenant_name" not in columns:
+                conn.execute(text("ALTER TABLE lease_contracts ADD COLUMN tenant_name VARCHAR(180) DEFAULT ''"))
             if "tenant_id" not in columns:
                 conn.execute(text("ALTER TABLE lease_contracts ADD COLUMN tenant_id VARCHAR"))
                 if "tenant_name" in columns:
