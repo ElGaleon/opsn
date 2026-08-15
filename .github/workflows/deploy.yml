@@ -9,6 +9,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check deploy secrets
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_PROJECT_PATH: ${{ secrets.VPS_PROJECT_PATH }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          test -n "$VPS_HOST" || { echo "::error::Missing VPS_HOST"; exit 1; }
+          test -n "$VPS_USER" || { echo "::error::Missing VPS_USER"; exit 1; }
+          test -n "$VPS_PROJECT_PATH" || { echo "::error::Missing VPS_PROJECT_PATH"; exit 1; }
+          test -n "$VPS_SSH_KEY" || { echo "::error::Missing VPS_SSH_KEY"; exit 1; }
+
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.0
         with:
