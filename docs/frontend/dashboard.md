@@ -1,26 +1,24 @@
-# Dashboard
+# 📊 Dashboard
 
-![Dashboard OPSN](../assets/screenshots/dashboard.png)
+![OPSN Dashboard](../assets/screenshots/dashboard.png)
 
-La Dashboard e la vista iniziale di OPSN. Riassume lo stato operativo del portafoglio immobiliare e mette in evidenza i numeri da controllare ogni mese.
+**The Dashboard** is the initial OPSN view. It summarizes the operating state of the property portfolio and highlights the numbers that need monthly attention.
 
-## Cosa mostra
+## ✨ Highlights
 
-- Incasso del mese corrente.
-- Cassa netta.
-- Morosita aperta.
-- Tasso di occupazione.
-- Competenza e incassi annuali.
-- Andamento mensile di entrate, uscite, incassato e pagato.
-- Sintesi annuale con entrate previste, uscite previste, netto previsto e netto effettuato.
-- Performance incassi.
-- Confronto tra incassi previsti e incassi reali.
-- Ultimi movimenti registrati.
+- 💸 **Current collections** for the active month.
+- 💼 **Net cash flow** across collected and paid movements.
+- ⚠️ **Open arrears** for unpaid tenant income.
+- 🏠 **Occupancy rate** across managed units.
+- 📈 **Monthly trends** for income, expenses, collections, and payments.
+- 🧾 **Annual summary** with expected income, expected expenses, expected net, and actual net.
+- 🎯 **Collection performance** against expected income.
+- 📊 **Expected vs actual collections** for quick variance checks.
 
-## Interazioni
+## 🧭 Interactions
 
-Le card principali sono cliccabili e aprono viste di dettaglio dedicate: incasso mese, cassa netta, morosita e occupazione.
+The main cards are clickable and open dedicated detail views: monthly collections, net cash flow, arrears, and occupancy.
 
-## Valore operativo
+## ✅ Operational Value
 
-Serve come punto di controllo rapido: permette di capire se gli affitti stanno entrando, se ci sono scostamenti rispetto alla competenza e se qualche immobile o inquilino richiede attenzione.
+It works as a quick control point: it shows whether rents are coming in, whether actuals differ from accruals, and whether any property or tenant needs attention.

@@ -1,22 +1,21 @@
-# Contratti
+# 📄 Contracts
 
-![Contratti OPSN](../assets/screenshots/contracts.png)
+![OPSN Contracts](../assets/screenshots/contracts.png)
 
-La sezione Contratti gestisce le locazioni associate alle unita immobiliari e agli inquilini.
+**Contracts** manages leases associated with property units and tenants.
 
-## Cosa permette di fare
+## ✨ Highlights
 
-- Cercare contratti per inquilino o unita.
-- Filtrare contratti attivi o terminati.
-- Creare, modificare ed eliminare contratti.
-- Associare un contratto a unita e inquilino.
-- Registrare data inizio, data fine, canone mensile, deposito e giorno di scadenza.
-- Consultare dettaglio e riepilogo economico del contratto.
+- 🔎 **Search and filter** contracts by tenant, unit, or status.
+- 🧾 **Manage leases** with create, edit, and delete actions.
+- 🏠 **Link each contract** to a unit and tenant.
+- 📅 **Track lease terms** with start date, end date, monthly rent, deposit, and due day.
+- 📊 **Review contract economics** through details and summaries.
 
-## Regole principali
+## 🧭 Main Rules
 
-Un contratto collega una unita a un inquilino e alimenta le viste economiche: dashboard, inquilini, movimenti e report.
+A contract links a unit to a tenant and feeds the financial views: dashboard, tenants, movements, and reports.
 
-## Valore operativo
+## ✅ Operational Value
 
-Centralizza canoni, scadenze e stato delle locazioni, riducendo il rischio di perdere rinnovi, contratti scaduti o incassi mancanti.
+It centralizes rent amounts, due dates, and lease status, reducing the risk of missing renewals, expired contracts, or missing collections.

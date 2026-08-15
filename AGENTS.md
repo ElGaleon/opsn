@@ -1,18 +1,33 @@
-# AGENTS.md
+# 🤖 AGENTS.md
 
-Indicazioni operative per lavorare su questo progetto.
+**AGENTS.md** defines the working rules for contributors and coding agents on this project.
 
-- Leggere il codice esistente prima di modificare: seguire pattern, naming e stile gia presenti.
-- Frontend React: struttura `src/app`, `src/features`, `src/shared`.
-- Le view devono orchestrare la pagina; componenti UI, form, tabelle, dettagli e calcoli vanno in `components`, `hooks`, `utils` della feature o in `shared` se riusabili.
-- Ogni feature con tipi propri deve avere `types/`; tenere in `shared/lib/api` solo i DTO/API comuni del backend.
-- Backend Python/FastAPI: mantenere separati `models`, `schemas`, `routers`, `services`.
-- Nessun file deve superare 500 righe.
-- Usare Zod per validare i form frontend.
-- Usare Clerk per autenticazione/autorizzazione quando configurato.
-- Tenere l'app Docker-friendly: frontend, backend e database devono partire con `docker compose`.
-- Non mescolare refactor e cambi funzionali non richiesti.
-- Prima di concludere una modifica frontend eseguire `npm run build` in `frontend`.
-- Prima di concludere una modifica backend eseguire `python3 -m compileall backend/app`.
-- Per ricerche nel repo usare `rg` o `rg --files`.
-- Preferire soluzioni semplici, localizzate e facili da leggere.
+## 🧭 Working Rules
+
+- 📖 **Read first:** inspect existing code before making changes and follow the patterns, naming, and style already in place.
+- ⚛️ **React frontend:** use the `src/app`, `src/features`, `src/shared` structure.
+- 🧩 **Feature layout:** views orchestrate pages; UI components, forms, tables, details, and calculations belong in the feature's `components`, `hooks`, `utils`, or in `shared` when reusable.
+- 🧾 **Types:** every feature with its own types should have `types/`; keep only shared backend DTOs/API types in `shared/lib/api`.
+- 🐍 **FastAPI backend:** keep `models`, `schemas`, `routers`, and `services` separate.
+- ✂️ **File size:** no file should exceed 500 lines.
+- ✅ **Forms:** use Zod to validate frontend forms.
+- 🔐 **Auth:** use Clerk for authentication/authorization when configured.
+- 🐳 **Runtime:** keep the app Docker-friendly; frontend, backend, and database must start with `docker compose`.
+- 🎯 **Scope:** do not mix refactors with unrelated functional changes.
+- 🔎 **Search:** use `rg` or `rg --files` for repository searches.
+- 🪶 **Style:** prefer simple, localized, easy-to-read solutions.
+
+## ✅ Checks
+
+Frontend:
+
+```bash
+cd frontend
+npm run build
+```
+
+Backend:
+
+```bash
+python3 -m compileall backend/app
+```

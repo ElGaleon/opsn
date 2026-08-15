@@ -1,22 +1,20 @@
-# Proprietari
+# 👥 Owners
 
-![Proprietari OPSN](../assets/screenshots/owners.png)
+![OPSN Owners](../assets/screenshots/owners.png)
 
-La sezione Proprietari raccoglie anagrafiche, quote economiche, saldi e trasferimenti tra comproprietari.
+**Owners** collects owner records, financial shares, balances, and transfers between co-owners.
 
-## Cosa permette di fare
+## ✨ Highlights
 
-- Cercare proprietari.
-- Creare, modificare ed eliminare anagrafiche.
-- Consultare il dettaglio di un proprietario.
-- Vedere crediti, debiti e saldo complessivo.
-- Aprire il pannello dei saldi.
-- Registrare trasferimenti tra proprietari.
+- 🔎 **Search owners** and open individual details.
+- 🧾 **Manage owner records** with create, edit, and delete actions.
+- ⚖️ **Review balances** with credits, debts, and overall position.
+- 💸 **Record owner transfers** between co-owners.
 
-## Logica dei saldi
+## 🧮 Balance Logic
 
-I saldi derivano dal confronto tra competenza economica e cassa reale. Se un proprietario incassa o paga direttamente piu della propria quota, il sistema evidenzia credito o debito verso gli altri.
+Balances come from comparing economic accruals with real cash flow. If an owner directly collects or pays more than their share, the system highlights a credit or debt toward the others.
 
-## Valore operativo
+## ✅ Operational Value
 
-Aiuta a evitare conteggi manuali tra familiari o comproprietari, soprattutto quando entrate e uscite non passano sempre dallo stesso conto.
+It helps avoid manual calculations between family members or co-owners, especially when income and expenses do not always pass through the same account.

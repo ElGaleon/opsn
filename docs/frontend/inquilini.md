@@ -1,21 +1,21 @@
-# Inquilini
+# 🔑 Tenants
 
-![Inquilini OPSN](../assets/screenshots/tenants.png)
+![OPSN Tenants](../assets/screenshots/tenants.png)
 
-La sezione Inquilini gestisce le anagrafiche delle persone o societa che occupano le unita.
+**Tenants** manages the records for people or companies occupying units.
 
-## Cosa permette di fare
+## ✨ Highlights
 
-- Cercare inquilini per nome, codice fiscale, partita IVA o contatti.
-- Filtrare inquilini attivi, scaduti, con morosita o senza morosita.
-- Creare, modificare ed eliminare anagrafiche.
-- Consultare canone mensile, dovuto, versato e morosita.
-- Vedere i contratti collegati a ogni inquilino.
+- 🔎 **Search tenants** by name, tax code, VAT number, or contacts.
+- 🧭 **Filter tenant status** by active, expired, with arrears, or without arrears.
+- 🧾 **Manage tenant records** with create, edit, and delete actions.
+- 💶 **Review tenant economics** with monthly rent, amount due, paid amount, and arrears.
+- 📄 **View linked contracts** for each tenant.
 
-## Dati collegati
+## 🔗 Linked Data
 
-Ogni inquilino puo avere uno o piu contratti. I movimenti collegati ai contratti alimentano dovuto, pagato e morosita.
+Each tenant can have one or more contracts. Movements linked to contracts feed due amounts, paid amounts, and arrears.
 
-## Valore operativo
+## ✅ Operational Value
 
-Rende immediato capire chi e in regola, chi ha arretrati e quali contratti sono ancora attivi.
+It makes it easy to see who is up to date, who has overdue amounts, and which contracts are still active.

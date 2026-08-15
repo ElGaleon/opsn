@@ -1,24 +1,21 @@
-# Immobili
+# 🏘️ Properties
 
-![Immobili OPSN](../assets/screenshots/properties.png)
+![OPSN Properties](../assets/screenshots/properties.png)
 
-La sezione Immobili gestisce il patrimonio: fabbricati, unita, valori economici e quote di proprieta.
+**Properties** manages the portfolio: buildings, units, financial values, and ownership shares.
 
-## Cosa permette di fare
+## ✨ Highlights
 
-- Cercare immobili per nome o indirizzo.
-- Filtrare immobili con o senza unita.
-- Creare, modificare ed eliminare immobili.
-- Registrare indirizzo, valore di acquisto, mutuo, spese condominiali e note.
-- Aprire il dettaglio di un immobile.
-- Gestire le unita collegate: appartamenti, garage, locali commerciali o altre tipologie.
-- Consultare statistiche collegate ai movimenti dell'immobile.
-- Gestire quote proprietarie su immobile o singola unita.
+- 🔎 **Search and filter** properties by name, address, or unit coverage.
+- 🏢 **Manage property records** with address, purchase value, mortgage, condominium expenses, and notes.
+- 🧱 **Manage linked units** such as apartments, garages, commercial premises, or other types.
+- 📊 **Review property statistics** derived from linked movements.
+- 👥 **Track ownership shares** for a whole property or a single unit.
 
-## Dati collegati
+## 🔗 Linked Data
 
-Gli immobili sono collegati a unita, contratti, movimenti e quote. Questa relazione consente di calcolare competenza, cassa e ripartizioni per proprietario.
+Properties are linked to units, contracts, movements, and shares. These relationships make it possible to calculate accruals, cash flow, and allocations by owner.
 
-## Valore operativo
+## ✅ Operational Value
 
-E la base anagrafica del gestionale: senza immobili e unita non si possono costruire correttamente contratti, movimenti e report.
+This is the registry foundation of the system: without properties and units, contracts, movements, and reports cannot be built correctly.

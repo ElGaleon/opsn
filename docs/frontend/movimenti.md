@@ -1,26 +1,24 @@
-# Movimenti
+# 💸 Movements
 
-![Movimenti OPSN](../assets/screenshots/movements.png)
+![OPSN Movements](../assets/screenshots/movements.png)
 
-La sezione Movimenti e il registro unico di entrate, uscite e trasferimenti tra proprietari.
+**Movements** is the single ledger for income, expenses, and transfers between owners.
 
-## Cosa permette di fare
+## ✨ Highlights
 
-- Cercare movimenti.
-- Filtrare per tipologia: entrata, uscita o trasferimento.
-- Filtrare per stato pagamento.
-- Creare, modificare ed eliminare movimenti.
-- Registrare competenza, scadenza, pagamento, importo e descrizione.
-- Associare movimenti a immobile, unita o contratto.
-- Gestire ripartizione per quote, per singolo proprietario o personalizzata.
-- Indicare chi ha incassato o pagato realmente.
+- 🔎 **Search and filter** movements by type and payment status.
+- 🧾 **Manage movements** with create, edit, and delete actions.
+- 📅 **Record financial timing** with accrual date, due date, payment date, amount, and description.
+- 🏠 **Link movements** to a property, unit, or contract.
+- 👥 **Allocate amounts** by ownership shares, a single owner, or a custom split.
+- 💳 **Track real cash handling** by specifying who actually collected or paid.
 
-## Stati pagamento
+## ✅ Payment Statuses
 
-- `paid`: movimento pagato o incassato.
-- `partial`: pagamento parziale.
-- `unpaid`: non pagato.
+- `paid`: paid or collected movement.
+- `partial`: partial payment.
+- `unpaid`: unpaid.
 
-## Valore operativo
+## 📊 Operational Value
 
-E la fonte primaria dei calcoli economici. Da qui derivano cassa, competenza, morosita, report e saldi tra proprietari.
+It is the primary source for financial calculations. Cash flow, accruals, arrears, reports, and owner balances are derived from here.
