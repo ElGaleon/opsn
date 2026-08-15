@@ -19,7 +19,6 @@ import {
   Unit,
 } from "@shared/lib/api";
 import { eur, formatDate } from "@shared/lib/utils";
-import { MovementTable } from "@features/movements/components/MovementTable";
 import { SectionPanel } from "@shared/components/SectionPanel";
 import { Button } from "@shared/components/ui/button";
 import { Select } from "@shared/components/ui/select";
@@ -193,10 +192,6 @@ export function Dashboard({
 
       <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
         <MonthlyTable rows={rows} year={currentYear} />
-      </div>
-
-      <div className="grid gap-4">
-        <MovementTable movements={movements.slice(0, 6)} />
       </div>
     </div>
   );
