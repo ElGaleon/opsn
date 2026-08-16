@@ -4,10 +4,14 @@ import { useState } from "react";
 import { AppShell } from "./views/AppShell";
 import { AuthGuard } from "./views/AuthGuard";
 import { useOpsnData } from "./hooks/useOpsnData";
-import { Dashboard } from "@features/dashboard/views/Dashboard";
 import { Section } from "./types/app";
 import { PageSkeleton } from "@shared/components/PageSkeleton";
 
+const Dashboard = lazy(() =>
+  import("@features/dashboard/views/Dashboard").then((module) => ({
+    default: module.Dashboard,
+  })),
+);
 const Properties = lazy(() =>
   import("@features/properties/views/Properties").then((module) => ({
     default: module.Properties,
@@ -60,17 +64,17 @@ function AppBody({
           <PageSkeleton />
         ) : (
           <>
-            {section === "dashboard" && (
-              <Dashboard
-                summary={data.summary}
-                properties={data.properties}
-                units={data.units}
-                contracts={data.contracts}
-                movements={data.movements}
-                forecast={data.forecast}
-              />
-            )}
             <Suspense fallback={<PageSkeleton />}>
+              {section === "dashboard" && (
+                <Dashboard
+                  summary={data.summary}
+                  properties={data.properties}
+                  units={data.units}
+                  contracts={data.contracts}
+                  movements={data.movements}
+                  forecast={data.forecast}
+                />
+              )}
               {section === "properties" && (
                 <Properties data={data} reload={load} getToken={getToken} />
               )}

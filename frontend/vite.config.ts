@@ -20,6 +20,9 @@ export default defineConfig(({ mode }) => {
         "@shared": path.resolve(__dirname, "src/shared"),
       },
     },
+    build: {
+      chunkSizeWarningLimit: 1000,
+    },
     server: {
       host: "0.0.0.0",
       port: 5173,
