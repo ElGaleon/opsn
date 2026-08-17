@@ -11,7 +11,12 @@ import { Table, Td, Th } from "@shared/components/ui/table";
 import { Owner } from "@shared/lib/api";
 import { eur } from "@shared/lib/utils";
 import { Data } from "@app/types/app";
-import { targetName } from "../utils/ownerUtils";
+import {
+  ownerBalanceAmount,
+  ownerBalanceLabel,
+  ownerBalanceTone,
+  targetName,
+} from "../utils/ownerUtils";
 
 export function OwnerDetail({
   data,
@@ -28,6 +33,7 @@ export function OwnerDetail({
   const forecast = data.forecast?.owners.find(
     (item) => item.owner_id === owner.id,
   );
+  const balance = Number(report?.owner_balance ?? 0);
   const shares = data.shares.filter((share) => share.owner_id === owner.id);
   const allocations = data.movements.flatMap((movement) =>
     movement.allocations
@@ -56,8 +62,8 @@ export function OwnerDetail({
             />
             <Stat
               label="Saldo"
-              value={eur.format(Number(report?.owner_balance ?? 0))}
-              tone={Number(report?.owner_balance ?? 0) >= 0 ? "good" : "bad"}
+              value={`${ownerBalanceLabel(balance)} ${eur.format(ownerBalanceAmount(balance))}`}
+              tone={ownerBalanceTone(balance)}
             />
             <Stat
               label="Previsione netta"

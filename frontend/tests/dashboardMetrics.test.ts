@@ -3,8 +3,18 @@ import {
   buildOccupancyRows,
   buildYearRows,
 } from "../src/features/dashboard/utils/dashboardMetrics";
-import { arrearsAmount, openAmount, paidAmount } from "../src/features/movements/utils/movementUtils";
-import { Contract, Movement, Unit } from "../src/shared/lib/apiTypes";
+import { buildOwnerSettlements } from "../src/features/owners/utils/ownerUtils";
+import {
+  arrearsAmount,
+  openAmount,
+  paidAmount,
+} from "../src/features/movements/utils/movementUtils";
+import {
+  Contract,
+  Movement,
+  OwnerReport,
+  Unit,
+} from "../src/shared/lib/apiTypes";
 
 const partial = {
   amount: "1000",
@@ -14,8 +24,20 @@ const partial = {
 
 assert.equal(paidAmount(partial), 250);
 assert.equal(openAmount(partial), 750);
-assert.equal(arrearsAmount({ ...partial, due_date: "2026-08-16" } as Movement, "2026-08-17"), 750);
-assert.equal(arrearsAmount({ ...partial, due_date: "2026-08-17" } as Movement, "2026-08-17"), 0);
+assert.equal(
+  arrearsAmount(
+    { ...partial, due_date: "2026-08-16" } as Movement,
+    "2026-08-17",
+  ),
+  750,
+);
+assert.equal(
+  arrearsAmount(
+    { ...partial, due_date: "2026-08-17" } as Movement,
+    "2026-08-17",
+  ),
+  0,
+);
 
 const movements = [
   {
@@ -45,7 +67,14 @@ const movements = [
 
 const rows = buildYearRows(
   2026,
-  [{ month: "2026-01", income_due: "1200", expense_due: "200", net_due: "1000" }],
+  [
+    {
+      month: "2026-01",
+      income_due: "1200",
+      expense_due: "200",
+      net_due: "1000",
+    },
+  ],
   movements,
 );
 
@@ -73,3 +102,14 @@ assert.deepEqual(
     [0, 2],
   ],
 );
+
+const ownerReports = [
+  { owner: "Mario", owner_balance: "500" },
+  { owner: "Laura", owner_balance: "-300" },
+  { owner: "Giulia", owner_balance: "-200" },
+] as OwnerReport[];
+
+assert.deepEqual(buildOwnerSettlements(ownerReports), [
+  { from: "Mario", to: "Laura", amount: 300 },
+  { from: "Mario", to: "Giulia", amount: 200 },
+]);

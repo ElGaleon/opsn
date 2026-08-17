@@ -3,7 +3,6 @@ import {
   FileText,
   LayoutDashboard,
   UserRound,
-  Users,
   WalletCards,
 } from "lucide-react";
 import { ReactNode } from "react";
@@ -25,9 +24,8 @@ import {
 const nav = [
   ["dashboard", LayoutDashboard, "Dashboard"],
   ["properties", Building2, "Immobili"],
+  ["leases", FileText, "Locazioni"],
   ["owners", UserRound, "Proprietari"],
-  ["contracts", FileText, "Contratti"],
-  ["tenants", Users, "Inquilini"],
   ["movements", WalletCards, "Movimenti"],
 ] as const;
 
@@ -44,13 +42,9 @@ const sectionMeta: Record<Section, { title: string; subtitle: string }> = {
     title: "Proprietari",
     subtitle: "Anagrafiche, saldi e trasferimenti",
   },
-  contracts: {
-    title: "Contratti",
-    subtitle: "Locazioni, canoni e scadenze contrattuali",
-  },
-  tenants: {
-    title: "Inquilini",
-    subtitle: "Anagrafiche, contratti e morosità",
+  leases: {
+    title: "Locazioni",
+    subtitle: "Contratti, inquilini, canoni e morosità",
   },
   movements: {
     title: "Movimenti",
@@ -153,7 +147,7 @@ function BottomNav({
   onSectionChange: (section: Section) => void;
 }) {
   return (
-    <nav className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+1.5rem)] z-40 grid grid-cols-6 rounded-2xl border border-sidebar-border bg-white/95 p-1 shadow-lg shadow-emerald-950/10 backdrop-blur lg:hidden">
+    <nav className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+1.5rem)] z-40 grid grid-cols-5 rounded-2xl border border-sidebar-border bg-white/95 p-1 shadow-lg shadow-emerald-950/10 backdrop-blur lg:hidden">
       {nav.map(([key, Icon, label]) => (
         <button
           key={key}

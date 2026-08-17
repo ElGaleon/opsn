@@ -8,6 +8,11 @@ import { Table, Td, Th } from "@shared/components/ui/table";
 import { Owner } from "@shared/lib/api";
 import { eur } from "@shared/lib/utils";
 import { Data } from "@app/types/app";
+import {
+  ownerBalanceAmount,
+  ownerBalanceLabel,
+  ownerBalanceTone,
+} from "../utils/ownerUtils";
 
 export function OwnerList({
   data,
@@ -63,8 +68,8 @@ export function OwnerList({
               onChange: onBalanceFilter,
               options: [
                 { value: "all", label: "Tutti" },
-                { value: "credit", label: "Saldo positivo" },
-                { value: "debt", label: "Saldo negativo" },
+                { value: "credit", label: "Da ricevere" },
+                { value: "debt", label: "Da versare" },
               ],
             },
           ]}
@@ -88,6 +93,7 @@ export function OwnerList({
             const forecast = data.forecast?.owners.find(
               (item) => item.owner_id === owner.id,
             );
+            const balance = Number(report?.owner_balance ?? 0);
             return (
               <tr
                 key={owner.id}
@@ -98,7 +104,20 @@ export function OwnerList({
                   <UserRound className="mr-2 inline" size={16} />
                   {owner.first_name} {owner.last_name}
                 </Td>
-                <Td>{eur.format(Number(report?.owner_balance ?? 0))}</Td>
+                <Td
+                  className={
+                    ownerBalanceTone(balance) === "bad"
+                      ? "text-amber-700"
+                      : ownerBalanceTone(balance) === "good"
+                        ? "text-emerald-700"
+                        : "text-stone-700"
+                  }
+                >
+                  <span className="font-medium">
+                    {ownerBalanceLabel(balance)}
+                  </span>{" "}
+                  {eur.format(ownerBalanceAmount(balance))}
+                </Td>
                 <Td>
                   <Badge>
                     {

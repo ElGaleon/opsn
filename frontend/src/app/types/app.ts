@@ -15,8 +15,7 @@ export type Section =
   | "dashboard"
   | "properties"
   | "owners"
-  | "contracts"
-  | "tenants"
+  | "leases"
   | "movements";
 
 export type Data = {

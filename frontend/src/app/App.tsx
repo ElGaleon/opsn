@@ -22,14 +22,9 @@ const Owners = lazy(() =>
     default: module.Owners,
   })),
 );
-const Contracts = lazy(() =>
-  import("@features/contracts/views/Contracts").then((module) => ({
-    default: module.Contracts,
-  })),
-);
-const Tenants = lazy(() =>
-  import("@features/tenants/views/Tenants").then((module) => ({
-    default: module.Tenants,
+const Leases = lazy(() =>
+  import("@features/leases/views/Leases").then((module) => ({
+    default: module.Leases,
   })),
 );
 const Movements = lazy(() =>
@@ -81,11 +76,8 @@ function AppBody({
               {section === "owners" && (
                 <Owners data={data} reload={load} getToken={getToken} />
               )}
-              {section === "contracts" && (
-                <Contracts data={data} reload={load} getToken={getToken} />
-              )}
-              {section === "tenants" && (
-                <Tenants data={data} reload={load} getToken={getToken} />
+              {section === "leases" && (
+                <Leases data={data} reload={load} getToken={getToken} />
               )}
               {section === "movements" && (
                 <Movements data={data} reload={load} getToken={getToken} />
