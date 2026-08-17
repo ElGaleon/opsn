@@ -18,7 +18,7 @@ import { appTheme } from "@shared/lib/theme";
 import { cn, eur, formatDate } from "@shared/lib/utils";
 import { Data } from "@app/types/app";
 import {
-  openAmount,
+  arrearsAmount,
   paidAmount,
   paymentStatusClass,
   paymentStatusLabel,
@@ -53,7 +53,7 @@ export function ContractDetail({
   const paid = payments
     .reduce((sum, movement) => sum + paidAmount(movement), 0);
   const arrears = payments.reduce(
-    (sum, movement) => sum + openAmount(movement),
+    (sum, movement) => sum + arrearsAmount(movement),
     0,
   );
   const active =

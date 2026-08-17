@@ -77,6 +77,11 @@ def month_end(day: date) -> date:
     return add_months(day.replace(day=1), 1) - timedelta(days=1)
 
 
+def rent_due_date(starts_on: date, due_day: int, month: date) -> date:
+    due = date(month.year, month.month, min(due_day, month_end(month).day))
+    return max(due, starts_on) if month == starts_on.replace(day=1) else due
+
+
 def build_allocations(db: Session, movement: models.Movement, payload: MovementIn) -> None:
     if payload.type == "transfer":
         if not payload.paid_by_owner_id or not payload.transfer_to_owner_id or not payload.payment_method:
@@ -109,15 +114,16 @@ def sync_contract_rent_movements(db: Session, contract: models.LeaseContract) ->
     unit = db.get(models.Unit, contract.unit_id)
     if not unit:
         return
+    today = date.today()
     start = contract.starts_on.replace(day=1)
-    stop = (contract.ends_on or date.today()).replace(day=1)
+    stop = min(contract.ends_on or today, today).replace(day=1)
     existing = set(
         db.scalars(select(models.Movement.accrual_date).where(models.Movement.contract_id == contract.id)).all()
     )
     month = start
     while month <= stop:
+        due = rent_due_date(contract.starts_on, contract.due_day, month)
         if month not in existing:
-            due = date(month.year, month.month, min(contract.due_day, month_end(month).day))
             payload = MovementIn(
                 property_id=unit.property_id,
                 unit_id=unit.id,
@@ -137,4 +143,10 @@ def sync_contract_rent_movements(db: Session, contract: models.LeaseContract) ->
             except HTTPException:
                 movement.allocations = []
             db.add(movement)
+        else:
+            db.query(models.Movement).filter(
+                models.Movement.contract_id == contract.id,
+                models.Movement.accrual_date == month,
+                models.Movement.status == models.MovementStatus.unpaid,
+            ).update({"due_date": due})
         month = add_months(month, 1)

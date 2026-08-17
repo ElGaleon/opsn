@@ -6,7 +6,7 @@ import { Contract, Forecast, Movement, Unit } from "@shared/lib/api";
 import { eur, formatDate } from "@shared/lib/utils";
 import { SectionPanel } from "@shared/components/SectionPanel";
 import { Table, Td, Th } from "@shared/components/ui/table";
-import { openAmount } from "@features/movements/utils/movementUtils";
+import { arrearsAmount } from "@features/movements/utils/movementUtils";
 import {
   buildOccupancyRows,
   buildYearRows,
@@ -193,7 +193,7 @@ export function ArrearsStatsDetail({
   onBack: () => void;
 }) {
   const unpaid = movements.filter(
-    (movement) => movement.type === "income" && openAmount(movement) > 0,
+    (movement) => movement.type === "income" && arrearsAmount(movement) > 0,
   );
   const years = [
     ...new Set([
@@ -215,7 +215,7 @@ export function ArrearsStatsDetail({
           (movement) =>
             (movement.due_date ?? movement.accrual_date).slice(0, 7) === month,
         )
-        .reduce((sum, movement) => sum + openAmount(movement), 0),
+        .reduce((sum, movement) => sum + arrearsAmount(movement), 0),
     };
   });
   const total = rows.reduce((sum, row) => sum + row.amount, 0);
@@ -290,7 +290,7 @@ export function ArrearsStatsDetail({
                   <Td>{movement.description}</Td>
                   <Td>{movement.category}</Td>
                   <Td className="text-right text-amber-700">
-                    {eur.format(openAmount(movement))}
+                    {eur.format(arrearsAmount(movement))}
                   </Td>
                 </tr>
               ))}

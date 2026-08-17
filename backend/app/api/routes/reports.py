@@ -68,7 +68,13 @@ def report_summary(db: Session = Depends(get_db)):
     expense_accrual = sum(amount for kind, _status, amount in rows if enum_value(kind) == "expense")
     income_cash = sum(amount for kind, status, amount in rows if enum_value(kind) == "income" and enum_value(status) == "paid")
     expense_cash = sum(amount for kind, status, amount in rows if enum_value(kind) == "expense" and enum_value(status) == "paid")
-    arrears = sum(amount for kind, status, amount in rows if enum_value(kind) == "income" and enum_value(status) != "paid")
+    arrears = db.scalar(
+        select(func.coalesce(func.sum(models.Movement.amount), 0)).where(
+            models.Movement.type == models.MovementType.income,
+            models.Movement.status != models.MovementStatus.paid,
+            func.coalesce(models.Movement.due_date, models.Movement.accrual_date) < date.today(),
+        )
+    )
     return {
         "income_accrual": Decimal(income_accrual),
         "expense_accrual": Decimal(expense_accrual),

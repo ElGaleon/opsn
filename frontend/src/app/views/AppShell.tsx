@@ -152,14 +152,9 @@ function BottomNav({
   section: Section;
   onSectionChange: (section: Section) => void;
 }) {
-  const items = nav.filter(([key]) =>
-    ["dashboard", "properties", "contracts", "tenants", "movements"].includes(
-      key,
-    ),
-  );
   return (
-    <nav className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+1.5rem)] z-40 grid grid-cols-5 rounded-2xl border border-sidebar-border bg-white/95 p-1 shadow-lg shadow-emerald-950/10 backdrop-blur lg:hidden">
-      {items.map(([key, Icon, label]) => (
+    <nav className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+1.5rem)] z-40 grid grid-cols-6 rounded-2xl border border-sidebar-border bg-white/95 p-1 shadow-lg shadow-emerald-950/10 backdrop-blur lg:hidden">
+      {nav.map(([key, Icon, label]) => (
         <button
           key={key}
           className={`flex min-w-0 flex-col items-center gap-1 rounded-xl px-1 py-2 text-[11px] font-medium ${section === key ? "bg-emerald-700 text-white" : "text-stone-600"}`}

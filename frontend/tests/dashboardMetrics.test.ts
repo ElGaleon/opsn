@@ -3,7 +3,7 @@ import {
   buildOccupancyRows,
   buildYearRows,
 } from "../src/features/dashboard/utils/dashboardMetrics";
-import { openAmount, paidAmount } from "../src/features/movements/utils/movementUtils";
+import { arrearsAmount, openAmount, paidAmount } from "../src/features/movements/utils/movementUtils";
 import { Contract, Movement, Unit } from "../src/shared/lib/apiTypes";
 
 const partial = {
@@ -14,6 +14,8 @@ const partial = {
 
 assert.equal(paidAmount(partial), 250);
 assert.equal(openAmount(partial), 750);
+assert.equal(arrearsAmount({ ...partial, due_date: "2026-08-16" } as Movement, "2026-08-17"), 750);
+assert.equal(arrearsAmount({ ...partial, due_date: "2026-08-17" } as Movement, "2026-08-17"), 0);
 
 const movements = [
   {

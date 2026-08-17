@@ -24,7 +24,7 @@ import { eur, formatDate } from "@shared/lib/utils";
 import { tenantSchema } from "@shared/schemas/forms";
 import { Data } from "@app/types/app";
 import {
-  openAmount,
+  arrearsAmount,
   paidAmount,
 } from "@features/movements/utils/movementUtils";
 import { TenantFormValues } from "../types/tenantTypes";
@@ -79,7 +79,7 @@ export function Tenants({
           .reduce((sum, movement) => sum + paidAmount(movement), 0);
         const arrears = movements
           .filter((movement) => movement.type === "income")
-          .reduce((sum, movement) => sum + openAmount(movement), 0);
+          .reduce((sum, movement) => sum + arrearsAmount(movement, today), 0);
         const monthlyRent = contracts.reduce(
           (sum, contract) => sum + Number(contract.monthly_rent),
           0,

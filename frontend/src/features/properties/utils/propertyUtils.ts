@@ -1,7 +1,7 @@
 import { Property, Unit } from "@shared/lib/api";
 import { Data } from "@app/types/app";
 import {
-  openAmount,
+  arrearsAmount,
   paidAmount,
 } from "@features/movements/utils/movementUtils";
 import {
@@ -72,6 +72,7 @@ export function unitTypeLabel(type?: string | null) {
 }
 
 export function statsFor(movements: Data["movements"]): MoneyStats {
+  const today = new Date().toISOString().slice(0, 10);
   const income = movements
     .filter((item) => item.type === "income")
     .reduce((sum, item) => sum + Number(item.amount), 0);
@@ -86,7 +87,7 @@ export function statsFor(movements: Data["movements"]): MoneyStats {
     .reduce((sum, item) => sum + paidAmount(item), 0);
   const arrears = movements
     .filter((item) => item.type === "income")
-    .reduce((sum, item) => sum + openAmount(item), 0);
+    .reduce((sum, item) => sum + arrearsAmount(item, today), 0);
   return {
     income,
     expenses,

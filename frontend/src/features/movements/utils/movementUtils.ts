@@ -88,3 +88,11 @@ export function openAmount(movement: Movement) {
   }
   return Number(movement.amount);
 }
+
+export function arrearsAmount(
+  movement: Movement,
+  today = new Date().toISOString().slice(0, 10),
+) {
+  const dueDate = movement.due_date ?? movement.accrual_date;
+  return dueDate < today ? openAmount(movement) : 0;
+}
